@@ -1,0 +1,3 @@
+[submodule "web/wsos"]
+	path = web/wsos
+	url = https://github.com/Lukas0025/wsos
