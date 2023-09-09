@@ -12,18 +12,28 @@
     //get current url
     $url = $_SERVER['REQUEST_URI'];
 
+    $sites = [
+        "sites" => [
+            "observations" => ["controller" => __DIR__ . "/CONTROLLERS/observations.php", "name" => "Observations", "icon" => "/static/icons/telescope.svg",      "menu" => true],
+            "stations"     => ["controller" => __DIR__ . "/CONTROLLERS/stations.php",     "name" => "Stations",     "icon" => "/static/icons/radio.svg",          "menu" => true],
+            "targets"      => ["controller" => __DIR__ . "/CONTROLLERS/targets.php",      "name" => "Targets",      "icon" => "/static/icons/focus-2.svg",        "menu" => true],
+            "modulations"  => ["controller" => __DIR__ . "/CONTROLLERS/modulations.php",  "name" => "Modulations",  "icon" => "/static/icons/wave-sine.svg",      "menu" => true],
+            "datatypes"    => ["controller" => __DIR__ . "/CONTROLLERS/datatypes.php",    "name" => "Data Types",   "icon" => "/static/icons/file-analytics.svg", "menu" => true],
+            "observation"  => ["controller" => __DIR__ . "/CONTROLLERS/observation.php",  "name" => "Observation view",                                           "menu" => false]
+        ],
+
+        "controller" => __DIR__ . "/CONTROLLERS/dashboard.php",
+        "name"       => "Dashboard",
+        "icon"       => "/static/icons/dashboard.svg",
+        "menu"       => true
+    ];
+
+    $router = new \wsos\router\basic\manager($sites);
+
     // create Basic context
     $context = [
         "url" => $url,
-        "menu_items" => [
-            ["url" => "/",              "name" => "Dashboard",    "icon" => "/static/icons/dashboard.svg"],
-            ["url" => "/observations",  "name" => "Observations", "icon" => "/static/icons/telescope.svg"],
-            ["url" => "/stations",      "name" => "Stations",     "icon" => "/static/icons/radio.svg"],
-            ["url" => "/targets",       "name" => "Targets",      "icon" => "/static/icons/focus-2.svg"],
-            ["url" => "/modulations",   "name" => "Modulations",  "icon" => "/static/icons/wave-sine.svg"],
-            ["url" => "/datatypes",     "name" => "Data Types",   "icon" => "/static/icons/file-analytics.svg"],
-        ],
-
+        "menu_items" => $router->getFlatMenu()->values,
         "logined" => $auth->getActive()
     ];
 
@@ -32,14 +42,11 @@
     $container->register("templateLoader", new wsos\templates\loader(__DIR__ . "/VIEWS"));
     $container->register("context", $context);
     $container->register("auth", $auth);
+    $container->register("rounter", $router);
 
     // seeds DB
     // do not do this in release!!
     include "seeds.php";
 
-    if      ($url == "/")             include __DIR__ . "/CONTROLLERS/dashboard.php";
-    else if ($url == "/observations") include __DIR__ . "/CONTROLLERS/observations.php";
-    else if ($url == "/stations")     include __DIR__ . "/CONTROLLERS/stations.php";
-    else if ($url == "/login")        include __DIR__ . "/CONTROLLERS/login.php";
-    else                              include __DIR__ . "/CONTROLLERS/404.php";
+    $router->route($url);
 ?>
