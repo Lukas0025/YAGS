@@ -1,0 +1,10 @@
+<li class="nav-item {% IF url==item.url USE active %}">
+    <a class="nav-link" href="{% BIND item.url %}" >
+        <span class="nav-link-icon d-md-none d-lg-inline-block">
+            <img class="icon" width="24" height="24" src="{% BIND item.icon %}"></svg>
+        </span>
+        <span class="nav-link-title">
+            {% BIND item.name %}
+        </span>
+    </a>
+</li>

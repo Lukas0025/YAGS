@@ -6,7 +6,7 @@
         public \wsos\database\types\text      $description; 
         public \wsos\database\types\json      $locator; 
 
-        function __construct($id = null, $name = "", $description = "", $locator = ["tle" => null, "gps" => null, "url" => null]) {
+        function __construct($id = null, $name = "", $description = "", $locator = []) {
             parent::__construct($id);
             $this->name        = new \wsos\database\types\text($name);
             $this->description = new \wsos\database\types\text($description);

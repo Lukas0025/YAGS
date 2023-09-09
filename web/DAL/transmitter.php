@@ -13,7 +13,7 @@
 
         function __construct(
             $id = null,
-            $object = null,
+            $target = null,
             $antenna = null,
             $modulation = null,
             $dataType = null,
@@ -23,11 +23,11 @@
             $processPipe = null
         ) {
             parent::__construct($id);
-            $this->object          = new \wsos\database\types\reference($object,      \DAL\object::class);
+            $this->target          = new \wsos\database\types\reference($target,      \DAL\target::class);
             $this->antenna         = new \wsos\database\types\reference($antenna,     \DAL\antenna::class);
             $this->modulation      = new \wsos\database\types\reference($modulation,  \DAL\modulation::class);
             $this->dataType        = new \wsos\database\types\reference($dataType,    \DAL\dataType::class);
-            $this->object          = new \wsos\database\types\reference($processPipe, \DAL\processPipe::class);
+            $this->processPipe     = new \wsos\database\types\reference($processPipe, \DAL\processPipe::class);
 
             $this->centerFrequency = new \wsos\database\types\integer($centerFrequency);
             $this->bandwidth       = new \wsos\database\types\integer($bandwidth);

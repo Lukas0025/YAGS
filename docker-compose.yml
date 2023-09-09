@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  RadioMasterWeb:
+    image: radiomasterphp
+    build: ./web
+    volumes:
+      - ./web:/var/www/html/
+    ports:
+      - 8000:80
+
+#  RadioMasterDb:
+#

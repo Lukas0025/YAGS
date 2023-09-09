@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+    {% INCLUDE layout/head.html %}
+    <body>
+        <div class="page">
+            {% BINDINCLUDE layout/header.html logined %}
+
+            <div class="page-header d-print-none mt-4">
+                <div class="container-xl">
+                    <div class="row g-2 align-items-center">
+                        <div class="col">
+                            <!-- Page pre-title -->
+                            <div class="page-pretitle">
+                                stations
+                            </div>
+                            <h2 class="page-title">
+                                Observations
+                            </h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-body">
+                <div class="container-xl">
+                  <div class="row row-deck row-cards">
+                    
+                    
+                    <div class="col-12">
+                      <div class="card">
+                        <div class="card-header">
+                          <h3 class="card-title">Planed, Successed and Faild</h3>
+                        </div>
+                        <div class="table-responsive">
+                          <table class="table card-table table-vcenter text-nowrap datatable table-hover">
+                            <thead>
+                              <tr>
+                                <th>Station</th>
+                                <th>Target</th>
+                                <th>Modulation</th>
+                                <th>Type</th>
+                                <th>Frequency</th>
+                                <th>Status</th>
+                                <th>Start</th>
+                                <th>End</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {% FOREACH observations RENDER blocks/observation-item.html %}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            <!-- Tabler Core -->
+            <script src="./dist/js/tabler.min.js?1668287865" defer=""></script>
+        </div>
+    </body>
+</html>

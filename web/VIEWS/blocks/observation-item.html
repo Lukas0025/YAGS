@@ -1,0 +1,18 @@
+<tr onclick="location.href = '/observation/{% BIND item.id %}'">
+    <td>{% BIND item.receiver.station.name %}</td>
+    <td>{% BIND item.transmitter.target.name %}</td>
+    <td>{% BIND item.transmitter.modulation.name %}</td>
+    <td>{% BIND item.transmitter.dataType.name %}</td>
+    <td>{% BIND item.transmitter.centerFrequency %}Hz</td>
+    <td>
+      <span class="badge 
+        {% IF item.status==fail      USE bg-danger %}
+        {% IF item.status==success   USE bg-success %}
+        {% IF item.status==recording USE bg-info %}
+        {% IF item.status==decoding  USE bg-warning %}
+        {% IF item.status==planed    USE bg-primary %}
+      me-1"></span> {% BIND item.status %}
+    </td>
+    <td>{% BIND item.start %}</td>
+    <td>{% BIND item.end %}</td>
+</tr>

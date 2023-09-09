@@ -17,7 +17,7 @@
             $gain            = 0
         ) {
             parent::__construct($id);
-            $this->object          = new \wsos\database\types\reference($station,     \DAL\station::class);
+            $this->station        = new \wsos\database\types\reference($station,     \DAL\station::class);
             $this->antenna         = new \wsos\database\types\reference($antenna,     \DAL\antenna::class);
 
             $this->centerFrequency = new \wsos\database\types\integer($centerFrequency);

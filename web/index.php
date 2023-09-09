@@ -1,6 +1,9 @@
 <?php
-    include __DIR__ . "/wsos/autoload.php";
-    include "DAL/user.php";
+    include __DIR__ . "/wsos/wsos/autoload.php";
+
+    foreach (glob("DAL/*.php") as $filename) {
+        include_once $filename;
+    }
 
     $container = new \wsos\structs\container();
     $db        = new \wsos\database\drivers\inAppArray();
@@ -13,12 +16,12 @@
     $context = [
         "url" => $url,
         "menu_items" => [
-            ["url" => "/",              "name" => "Dashboard"],
-            ["url" => "/observations",  "name" => "Observations"],
-            ["url" => "/stations",      "name" => "Stations"],
-            ["url" => "/targets",       "name" => "Targets"],
-            ["url" => "/modulations",   "name" => "Modulations"],
-            ["url" => "/datatypes",     "name" => "Data Types"],
+            ["url" => "/",              "name" => "Dashboard",    "icon" => "/static/icons/dashboard.svg"],
+            ["url" => "/observations",  "name" => "Observations", "icon" => "/static/icons/telescope.svg"],
+            ["url" => "/stations",      "name" => "Stations",     "icon" => "/static/icons/radio.svg"],
+            ["url" => "/targets",       "name" => "Targets",      "icon" => "/static/icons/focus-2.svg"],
+            ["url" => "/modulations",   "name" => "Modulations",  "icon" => "/static/icons/wave-sine.svg"],
+            ["url" => "/datatypes",     "name" => "Data Types",   "icon" => "/static/icons/file-analytics.svg"],
         ],
 
         "logined" => $auth->getActive()
@@ -34,8 +37,9 @@
     // do not do this in release!!
     include "seeds.php";
 
-    if      ($url == "/")             include "CONTROLLERS/dashboard.php";
-    else if ($url == "/observations") include "CONTROLLERS/observations.php";
-    else if ($url == "/stations")     include "CONTROLLERS/stations.php";
-    else                              include "CONTROLLERS/404.php";
+    if      ($url == "/")             include __DIR__ . "/CONTROLLERS/dashboard.php";
+    else if ($url == "/observations") include __DIR__ . "/CONTROLLERS/observations.php";
+    else if ($url == "/stations")     include __DIR__ . "/CONTROLLERS/stations.php";
+    else if ($url == "/login")        include __DIR__ . "/CONTROLLERS/login.php";
+    else                              include __DIR__ . "/CONTROLLERS/404.php";
 ?>
