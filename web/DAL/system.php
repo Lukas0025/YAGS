@@ -1,7 +1,7 @@
 <?php
     namespace DAL;
 
-    class station extends \wsos\database\core\row {
+    class system extends \wsos\database\core\row {
         public \wsos\database\types\text      $name;
         public \wsos\database\types\text      $value; 
 
