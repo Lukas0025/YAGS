@@ -55,8 +55,8 @@
     if (!$system->find("name", "seeds")) {
         include "seeds.php";
 
-        $system->name  = "seeds";
-        $system->value = "true";
+        $system->name->set("seeds");
+        $system->value->set("true");
         $system->commit();
     }
 
