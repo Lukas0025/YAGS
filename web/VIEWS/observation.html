@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+{% INCLUDE layout/head.html %}
+
+<body>
+  <div class="page">
+    {% BINDINCLUDE layout/header.html logined %}
+
+    <div class="page-header d-print-none mt-4">
+      <div class="container-xl">
+        <div class="row g-2 align-items-center">
+          <div class="col">
+            <div class="page-pretitle">
+              {% BIND observation.id %}
+            </div>
+            <h2 class="page-title">
+              Observation of {% BIND observation.transmitter.target.name %}
+            </h2>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-body">
+      <div class="container-xl">
+        <div class="row row-deck row-cards">
+
+          <div class="col-12">
+            <div class="row row-cards">
+              <div class="col-12">
+                <div class="card">
+                  <div class="card-header">
+                    <h3 class="card-title">Base info</h3>
+                  </div>
+                  <div class="card-body">
+                    <div class="datagrid">
+                      <div class="datagrid-item">
+                        <div class="datagrid-title">Target</div>
+                        <div class="datagrid-content"><a href="/target/{% BIND observation.transmitter.target.id %}">
+                          {% BIND observation.transmitter.target.name %}
+                        </a></div>
+                      </div>
+                      <div class="datagrid-item">
+                        <div class="datagrid-title">Station</div>
+                        <div class="datagrid-content"><a href="/station/{% BIND observation.receiver.station.id %}">
+                          {% BIND observation.receiver.station.name %}
+                        </a></div>
+                      </div>
+                      <div class="datagrid-item">
+                        <div class="datagrid-title">MODULATION</div>
+                        <div class="datagrid-content"><a
+                            href="/modulation/{% BIND observation.transmitter.modulation.id %}">
+                            {% BIND observation.transmitter.modulation.name %}
+                          </a></div>
+                      </div>
+                      <div class="datagrid-item">
+                        <div class="datagrid-title">TYPE</div>
+                        <div class="datagrid-content"><a
+                            href="/datatype/{% BIND observation.transmitter.dataType.id %}">
+                            {% BIND observation.transmitter.dataType.name %}
+                          </a></div>
+                      </div>
+                      <div class="datagrid-item">
+                        <div class="datagrid-title">Frequency</div>
+                        <div class="datagrid-content">{% BIND observation.transmitter.centerFrequency %}Hz</div>
+                      </div>
+                      <div class="datagrid-item">
+                        <div class="datagrid-title">Bandwidth</div>
+                        <div class="datagrid-content">{% BIND observation.transmitter.bandwidth %}Hz</div>
+                      </div>
+                      <div class="datagrid-item">
+                        <div class="datagrid-title">Status</div>
+                        <div class="datagrid-content">
+                          <span class="status 
+                                        {% IF observation.status==fail      USE status-red %}
+                                        {% IF observation.status==success   USE status-green %}
+                                        {% IF observation.status==recording USE status-white %}
+                                        {% IF observation.status==decoding  USE status-yelow %}
+                                        {% IF observation.status==planed    USE status-blue %}
+                                        {% IF observation.status==assigned  USE status-grey %}
+                                        {% IF observation.status==recorded  USE status-white %}
+                                    ">
+                            {% BIND observation.status %}
+                          </span>
+                        </div>
+                      </div>
+                      <div class="datagrid-item">
+                        <div class="datagrid-title">Start UTC Time</div>
+                        <div class="datagrid-content"> -> {% BIND observation.start %}</div>
+                      </div>
+                      <div class="datagrid-item">
+                        <div class="datagrid-title">End UTC Time</div>
+                        <div class="datagrid-content"> <- {% BIND observation.end %}</div>
+                        </div>
+                        <div class="datagrid-item">
+                          <div class="datagrid-title">Transmitter antenna</div>
+                          <div class="datagrid-content">{% BIND observation.transmitter.antenna.name %}</div>
+                        </div>
+                        <div class="datagrid-item">
+                          <div class="datagrid-title">Receiver antenna</div>
+                          <div class="datagrid-content">{% BIND observation.receiver.antenna.name %}</div>
+                        </div>
+                        <div class="datagrid-item">
+                          <div class="datagrid-title">Receiver gain</div>
+                          <div class="datagrid-content">{% BIND observation.receiver.gain %}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-6">
+              <div class="row row-cards">
+                <div class="col-12">
+                  <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title">Another observation of target</h3>
+                    </div>
+                    <div class="table-responsive scrollable" style="height: 400px">
+                      <table class="table card-table table-vcenter text-nowrap datatable table-hover">
+                        <thead>
+                          <tr>
+                            <th>Modulation</th>
+                            <th>Status</th>
+                            <th>Start</th>
+                            <th>End</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% FOREACH observations RENDER blocks/observation-item_short.html %}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-6">
+              <div class="card">
+                <div class="card-header border-0">
+                  <div class="card-title">Target record map</div>
+                </div>
+                <div class="position-relative">
+                  <div id="map" style="height:400px;" tabindex="0">
+                    <script src="/static/js/map.js"></script>
+                    <script>
+                      var map = L.map('map').setView([0, 0], 1);
+
+                      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                      }).addTo(map);
+
+                      mapAddTLEPath(
+                        map,
+                        "{% BIND observation.transmitter.target.locator.tle.line1 %}",
+                        "{% BIND observation.transmitter.target.locator.tle.line2 %}",
+                        "{% BIND observation.start %} UTC",
+                        "{% BIND observation.end %} UTC"
+                      );
+
+                    </script>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-12">
+              <div class="row row-cards">
+                <div class="col-12">
+                  <div class="card">
+                    <div class="row g-0">
+                      <div class="col-12 col-md-3 border-end">
+                        <div class="card-header">
+                          <h3 class="card-title">Artefacts</h3>
+                        </div>
+                        <div class="card-body">
+                          <div class="list-group list-group-transparent scrollable" style="height: 35rem">
+                            {% FOREACH artefacts USE '<a value="(\ BIND item.url \)" onclick="art(this)" class="list-group-item list-group-item-action d-flex align-items-center artefact">(\ BIND item.name \)</a>' %}
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-12 col-md-9 d-flex flex-column">
+                        <div class="card-body">
+                          <h2 class="mb-4" id="artefact-title"></h2>
+                          <div id="artefact-body" class="row align-items-center scrollable" style="height: 35rem">
+                            <div class="empty">
+                              <div class="empty-img"><img src="/static/icons/undraw_printing_invoices_5r4r.svg" height="128" alt="">
+                              </div>
+                              <p class="empty-title">No artefacts found</p>
+                              <p class="empty-subtitle text-secondary">
+                                Try wait until observation is decoded.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+
+        <!-- Tabler Core -->
+        <script src="/dist/js/tabler.min.js?1668287865" defer=""></script>
+        <script>
+          function extension(val) {
+            var parts = val.split(".");
+            return parts[parts.length - 1].toLowerCase();
+          }
+
+          function art(el) {
+            var url  = el.getAttribute("value");
+            var name = el.innerHTML;
+
+            document.getElementById("artefact-title").innerHTML = name;
+
+            if (extension(name) == "png" || extension(name) == "jpg" ) {
+              document.getElementById("artefact-body") .innerHTML = "<img src='" + url + "'>";
+            } else if (extension(name) == "json" || extension(name) == "txt" ) {
+              var request = new XMLHttpRequest();
+              request.open('GET', url, true);
+              request.send();
+              request.onreadystatechange = function () {
+                if (request.readyState === 4 && request.status === 200) {
+                  document.getElementById("artefact-body") .innerHTML = "<pre>" + request.responseText + "</pre>";
+                }
+              }
+            } else {
+              document.getElementById("artefact-body") .innerHTML = "Binnary file";
+            }
+
+            var items = document.getElementsByClassName("artefact");
+
+            for (var i = 0; i < items.length; i++) {
+              items[i].classList.remove("active");
+            }
+
+            el.classList.add("active");
+          }
+
+          var allArtefacts = document.getElementsByClassName("artefact");
+
+          if (allArtefacts.length > 0) {
+            art(allArtefacts[0]);
+          }
+        </script>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

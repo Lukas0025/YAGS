@@ -17,6 +17,15 @@
                                 Observations
                             </h2>
                         </div>
+                        <div class="col-auto ms-auto d-print-none">
+                          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            Plan observation
+                          </button>
+                        </div>
+                    </div>
+
+                    <div class="col mt-4" style="display: none;" id="created-alert">
+                      <div class="alert alert-success" role="alert">Successly created observation plan <span id="created-id"></span> [<a href="/observations">refresh</a>]?</div>
                     </div>
                 </div>
             </div>
@@ -56,8 +65,66 @@
                 </div>
               </div>
 
+              <div class="modal" id="exampleModal" tabindex="-1">
+                <div class="modal-dialog modal-lg" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title">New observation</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <div class="row">
+                        <div class="col-lg-7">
+                          <div class="mb-3">
+                            <label class="form-label">Target transmitter</label>
+                            <select class="form-select" id="plan-transmitter">
+                              {% FOREACH transmitters USE '<option value="(\ BIND item.id \)">
+                                (\ BIND item.target.name \) -
+                                (\ BIND item.modulation.name \) -
+                                (\ BIND item.dataType.name \) @
+                                (\ BIND item.centerFrequency \)Hz
+                              </option>' %}
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-lg-5">
+                          <div class="mb-3">
+                            <label class="form-label">Station receiver</label>
+                            <select class="form-select" id="plan-receiver">
+                              {% FOREACH receivers USE '<option value="(\ BIND item.id \)">(\ BIND item.station.name \) @ (\ BIND item.centerFrequency \)Hz</option>' %}
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal-body">
+                      <div class="row">
+                        <div class="col-lg-6">
+                          <div class="mb-3">
+                            <label class="form-label">Start UTC time</label>
+                            <input type="datetime-local" id="plan-start" class="form-control">
+                          </div>
+                        </div>
+                        <div class="col-lg-6">
+                          <div class="mb-3">
+                            <label class="form-label">End UTC time</label>
+                            <input type="datetime-local" id="plan-end" class="form-control">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn me-auto" data-bs-dismiss="modal">Close</button>
+                      <button type="button" onclick="plan()" class="btn btn-primary" data-bs-dismiss="modal">Plan!</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
             <!-- Tabler Core -->
-            <script src="./dist/js/tabler.min.js?1668287865" defer=""></script>
+            <script src="/dist/js/tabler.min.js?1668287865" defer=""></script>
+
+            <script src="/static/js/observations.js"></script>
         </div>
     </body>
 </html>

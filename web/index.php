@@ -6,7 +6,7 @@
     }
 
     $container = new \wsos\structs\container();
-    $db        = new \wsos\database\drivers\inAppArray();
+    $db        = new \wsos\database\drivers\csv(__DIR__ . "/DB");
     $auth      = new \wsos\auth\basic\manager(DAL\user::class, "userName", "pass", "/login");
 
     //get current url
@@ -15,11 +15,15 @@
     $sites = [
         "sites" => [
             "observations" => ["controller" => __DIR__ . "/CONTROLLERS/observations.php", "name" => "Observations", "icon" => "/static/icons/telescope.svg",      "menu" => true],
+            /*
             "stations"     => ["controller" => __DIR__ . "/CONTROLLERS/stations.php",     "name" => "Stations",     "icon" => "/static/icons/radio.svg",          "menu" => true],
             "targets"      => ["controller" => __DIR__ . "/CONTROLLERS/targets.php",      "name" => "Targets",      "icon" => "/static/icons/focus-2.svg",        "menu" => true],
             "modulations"  => ["controller" => __DIR__ . "/CONTROLLERS/modulations.php",  "name" => "Modulations",  "icon" => "/static/icons/wave-sine.svg",      "menu" => true],
             "datatypes"    => ["controller" => __DIR__ . "/CONTROLLERS/datatypes.php",    "name" => "Data Types",   "icon" => "/static/icons/file-analytics.svg", "menu" => true],
-            "observation"  => ["controller" => __DIR__ . "/CONTROLLERS/observation.php",  "name" => "Observation view",                                           "menu" => false]
+            */
+            "observation"  => ["controller" => __DIR__ . "/CONTROLLERS/observation.php",  "name" => "Observation view",                                           "menu" => false],
+            "login"        => ["controller" => __DIR__ . "/CONTROLLERS/login.php",        "name" => "Login",                                                      "menu" => false],
+            "api"          => ["controller" => __DIR__ . "/API/main.php",                 "name" => "api",                                                        "menu" => false],
         ],
 
         "controller" => __DIR__ . "/CONTROLLERS/dashboard.php",
@@ -34,7 +38,8 @@
     $context = [
         "url" => $url,
         "menu_items" => $router->getFlatMenu()->values,
-        "logined" => $auth->getActive()
+        "logined" => $auth->getActive(),
+        "appName" => "YAGS"
     ];
 
     // register containers
@@ -42,11 +47,11 @@
     $container->register("templateLoader", new wsos\templates\loader(__DIR__ . "/VIEWS"));
     $container->register("context", $context);
     $container->register("auth", $auth);
-    $container->register("rounter", $router);
+    $container->register("router", $router);
 
     // seeds DB
     // do not do this in release!!
-    include "seeds.php";
+    //include "seeds.php";
 
     $router->route($url);
 ?>

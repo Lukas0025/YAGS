@@ -6,6 +6,7 @@
         public \wsos\database\types\reference $antenna;         // YAGI, DISH, ....
         public \wsos\database\types\integer   $centerFrequency; // in Hz
         public \wsos\database\types\integer   $bandwidth;       // in Hz
+        public \wsos\database\types\json      $params;          // params for use
         public \wsos\database\types\integer   $gain;            // gain of reciver setup
 
         function __construct(
@@ -14,6 +15,7 @@
             $antenna         = null,
             $centerFrequency = 0,
             $bandwidth       = 0,
+            $params          = [], 
             $gain            = 0
         ) {
             parent::__construct($id);
@@ -22,6 +24,7 @@
 
             $this->centerFrequency = new \wsos\database\types\integer($centerFrequency);
             $this->bandwidth       = new \wsos\database\types\integer($bandwidth);
+            $this->params          = new \wsos\database\types\json($params);
             $this->gain            = new \wsos\database\types\integer($gain);
         }
     }

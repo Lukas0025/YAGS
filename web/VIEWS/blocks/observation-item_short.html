@@ -1,9 +1,5 @@
 <tr onclick="location.href = '/observation/{% BIND item.id %}'">
-    <td>{% BIND item.receiver.station.name %}</td>
-    <td>{% BIND item.transmitter.target.name %}</td>
     <td>{% BIND item.transmitter.modulation.name %}</td>
-    <td>{% BIND item.transmitter.dataType.name %}</td>
-    <td>{% BIND item.transmitter.centerFrequency %}Hz</td>
     <td>
       <span class="badge 
         {% IF item.status==fail      USE bg-danger %}
