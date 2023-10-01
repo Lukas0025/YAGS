@@ -13,6 +13,7 @@
     //register API functions
     include_once(__DIR__ . "/observations.php");
     include_once(__DIR__ . "/stations.php");
+    include_once(__DIR__ . "/cron.php");
 
     //init API
     $api->serve($router->getArgs());
