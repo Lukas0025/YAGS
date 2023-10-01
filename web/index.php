@@ -49,9 +49,16 @@
     $container->register("auth", $auth);
     $container->register("router", $router);
 
-    // seeds DB
-    // do not do this in release!!
-    //include "seeds.php";
+    $system = new \DAL\system();
+
+    // detect if is seeded
+    if (!$system->find("name", "seeds")) {
+        include "seeds.php";
+
+        $system->name  = "seeds";
+        $system->value = "true";
+        $system->commit();
+    }
 
     $router->route($url);
 ?>
