@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   RadioMasterWeb:
-    image: yagsWeb
+    image: yags-web
     build: ./web
     ports:
       - 80:80
