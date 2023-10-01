@@ -283,6 +283,3 @@
     $meteor23HRPT->modulation->set($hrpt);
     $meteor23HRPT->antenna->set($qfh);
     $meteor23HRPT->commit();
-
-
-    die();
