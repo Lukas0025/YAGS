@@ -1,13 +1,7 @@
 version: '3.8'
 services:
   RadioMasterWeb:
-    image: radiomasterphp
+    image: yagsWeb
     build: ./web
-    volumes:
-      - ./web:/var/www/html/
-      - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
     ports:
-      - 8000:80
-
-#  RadioMasterDb:
-#
+      - 80:80
