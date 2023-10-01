@@ -8,6 +8,7 @@ import os
 import pathlib
 
 watingJobs = []
+location   = {}
 
 def getNewJobs():
     response = urlopen(config.masterUrl + "/api/observation/record?key=" + config.apiKey)
@@ -19,9 +20,22 @@ def getInfo():
     data_json = json.loads(response.read())
     return data_json
 
+def getPlaneble():
+    response = urlopen(config.masterUrl + "/api/station/autoPlanable?key=" + config.apiKey)
+    data_json = json.loads(response.read())
+    return data_json
+
 def apiSend(url, data, files=None):
     r = requests.post(url=config.masterUrl + url, data=data, files=files)
     return r.text
+
+def plan(transmitter, receiver, start, end):
+    apiSend("/api/observation/plan", {
+        "transmitter": transmitter,
+        "receiver":    receiver,
+        "start":       start.strftime("%Y-%m-%dT%H:%M:%S"),
+        "end":         end  .strftime("%Y-%m-%dT%H:%M:%S")
+    })
 
 def setFail(observation):
     apiSend("/api/observation/fail", {"id": observation})
@@ -71,12 +85,12 @@ def parseNewJobs(jobs):
         watingJobs.append(job)
 
 def parseInfo(info):
-    if "gps" in info:
-        config.lat = info["gps"]["lat"]
-        config.lon = info["gps"]["lon"]
-        config.alt = info["gps"]["alt"] / 1000
+    if "gps" in info["locator"]:
+        location["lat"] = info["locator"]["gps"]["lat"]
+        location["lon"] = info["locator"]["gps"]["lon"]
+        location["alt"] = info["locator"]["gps"]["alt"] / 1000
 
-        print(f"[INFO] loaded locator from YAGS server LAT: {config.lat}, LON: {config.lon}, ALT: {config.alt}")
+        #print(f"[INFO] loaded locator from YAGS server LAT: {position["lat"]}, LON: {position["lon"]}, ALT: {position["alt"]}")
 
 def pull():
     #get station info
