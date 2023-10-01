@@ -21,9 +21,10 @@ def del_folder(path):
     path.rmdir()
 
 class recorder(threading.Thread):
-    def __init__(self, job):
+    def __init__(self, job, location):
         threading.Thread.__init__(self)
         self.job = job
+        self.location = location
  
     def run(self):
         print(f"Recorder for job {self.job['target']['name']} started")
@@ -32,7 +33,7 @@ class recorder(threading.Thread):
 
         #init rotator
         rotatorDriver = simplecom("/dev/ttyUSB0")
-        rotatorCTR    = rotator(rotatorDriver, self.job, config.station)
+        rotatorCTR    = rotator(rotatorDriver, self.job, self.location)
         rotatorCTR.start()
 
         baseband = f"records/{self.job['id']}"
@@ -47,7 +48,6 @@ class recorder(threading.Thread):
         time.sleep(50)
 
         os.system(f"satdump record {baseband} --source {self.job['receiver']['params']['radio']} --samplerate {fs} --frequency {self.job['transmitter']['centerFrequency']} --gain {self.job['receiver']['params']['gain']} --baseband_format s8 --timeout {recordTime}")
-
 
         print(f"Recorder for job {self.job['target']['name']} stoped")
 

@@ -290,3 +290,13 @@
     $meteor23HRPT->modulation->set($hrpt);
     $meteor23HRPT->antenna->set($qfh);
     $meteor23HRPT->commit();
+
+    // add autoplas
+    $myStation137->autoPlan->set([
+        $noaa15APT->id->get(),
+        $noaa18APT->id->get(),
+        $noaa19APT->id->get(),
+        $meteor23LRPT1->id->get()
+    ]);
+
+    $myStation137->commit();

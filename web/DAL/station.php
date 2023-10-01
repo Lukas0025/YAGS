@@ -6,9 +6,9 @@
         public \wsos\database\types\uuid      $apiKey;     // access key
         public \wsos\database\types\timestamp $lastSeen;
         public \wsos\database\types\text      $description; 
-        public \wsos\database\types\json      $locator; 
+        public \wsos\database\types\json      $locator;
 
-        function __construct($id = null, $name = "", $apiKey = null, $lastSeen = 0, $description = "", $locator = []) {
+        function __construct($id = null, $name = "", $apiKey = null, $lastSeen = 0, $description = "", $locator = [], $autoPlan = []) {
             parent::__construct($id);
             $this->name        = new \wsos\database\types\text($name);
             $this->description = new \wsos\database\types\text($description);
