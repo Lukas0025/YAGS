@@ -56,9 +56,9 @@
     /**
      * Get used size
      */
-    $context["usedSize"]          = round(foldersize(__DIR__ . "/../artefacts/")        / 1000000);
-    $context["imagesSize"]        = round(foldersize(__DIR__ . "/../artefacts/", "png") / 1000000);
-    $context["basebandSize"]      = round(foldersize(__DIR__ . "/../artefacts/", "s8")  / 1000000);
+    $context["usedSize"]          = round(foldersize(__DIR__ . "/../ARTEFACTS/")        / 1000000);
+    $context["imagesSize"]        = round(foldersize(__DIR__ . "/../ARTEFACTS/", "png") / 1000000);
+    $context["basebandSize"]      = round(foldersize(__DIR__ . "/../ARTEFACTS/", "s8")  / 1000000);
     $context["otherSize"]         = $context["usedSize"] - $context["imagesSize"] + $context["basebandSize"];
     $context["freeSize"]          = $context["artefactsSpace"] - $context["usedSize"];
 

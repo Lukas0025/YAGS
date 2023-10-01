@@ -38,6 +38,13 @@
      */
     $myStation = new \DAL\station();
     $myStation->name->set("default");
+    $myStation->locator->set([
+        "gps" => [
+            "lat" => 49.2397383,
+            "lon" => 16.5684175,
+            "alt" => 277
+        ] 
+    ]);
     $myStation->commit();
 
     $myStation137 = new \DAL\receiver();

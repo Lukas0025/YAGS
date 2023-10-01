@@ -41,7 +41,7 @@ class recorder(threading.Thread):
 
         # find supported FS
         for sample in self.job["receiver"]["params"]["fs"]:
-            if (sample > (int(self.job['transmitter']['bandwidth']) * 2)) and (sample < fs):
+            if (sample > int(self.job['transmitter']['bandwidth'])) and (sample < fs):
                 fs = sample
 
         time.sleep(50)

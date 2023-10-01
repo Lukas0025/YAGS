@@ -14,6 +14,11 @@ def getNewJobs():
     data_json = json.loads(response.read())
     return data_json
 
+def getInfo():
+    response = urlopen(config.masterUrl + "/api/station/APIinfo?key=" + config.apiKey)
+    data_json = json.loads(response.read())
+    return data_json
+
 def apiSend(url, data, files=None):
     r = requests.post(url=config.masterUrl + url, data=data, files=files)
     return r.text
@@ -65,6 +70,17 @@ def parseNewJobs(jobs):
 
         watingJobs.append(job)
 
+def parseInfo(info):
+    if "gps" in info:
+        config.lat = info["gps"]["lat"]
+        config.lon = info["gps"]["lon"]
+        config.alt = info["gps"]["alt"] / 1000
+
+        print(f"[INFO] loaded locator from YAGS server LAT: {config.lat}, LON: {config.lon}, ALT: {config.alt}")
+
 def pull():
+    #get station info
+    info = getInfo()
+    parseInfo(info)
     jobs = getNewJobs()
     parseNewJobs(jobs)
