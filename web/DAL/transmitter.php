@@ -9,7 +9,7 @@
         public \wsos\database\types\reference $processPipe;     // process pipe for transmitter
         public \wsos\database\types\integer   $centerFrequency; // in Hz
         public \wsos\database\types\integer   $bandwidth;       // in Hz
-        public \wsos\database\types\boolean   $autoPlan;        // can be events autoplaned?
+        public \wsos\database\types\integer   $priority;        // priority of transmitter
 
         function __construct(
             $id = null,
@@ -19,7 +19,7 @@
             $dataType = null,
             $centerFrequency = 0,
             $bandwidth = 0,
-            $autoPlan = false,
+            $priority = 0,
             $processPipe = null
         ) {
             parent::__construct($id);
@@ -31,7 +31,7 @@
 
             $this->centerFrequency = new \wsos\database\types\integer($centerFrequency);
             $this->bandwidth       = new \wsos\database\types\integer($bandwidth);
-            $this->autoPlan        = new \wsos\database\types\boolean($autoPlan);
+            $this->priority        = new \wsos\database\types\integer($priority);
         }
     }
 ?>

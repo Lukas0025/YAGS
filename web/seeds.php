@@ -143,6 +143,7 @@
     $noaa19APT->centerFrequency->set(137100000);
     $noaa19APT->modulation->set($apt);
     $noaa19APT->antenna->set($qfh);
+    $noaa19APT->priority->set(2);
     $noaa19APT->processPipe->set($aptPipe);
     $noaa19APT->commit();
 
@@ -186,6 +187,7 @@
     $noaa18APT->centerFrequency->set(137912500);
     $noaa18APT->modulation->set($apt);
     $noaa18APT->antenna->set($qfh);
+    $noaa18APT->priority->set(1);
     $noaa18APT->processPipe->set($aptPipe);
     $noaa18APT->commit();
 
@@ -229,6 +231,7 @@
     $noaa15APT->centerFrequency->set(137500000);
     $noaa15APT->modulation->set($apt);
     $noaa15APT->antenna->set($qfh);
+    $noaa15APT->priority->set(0);
     $noaa15APT->processPipe->set($aptPipe);
     $noaa15APT->commit();
 
@@ -269,6 +272,7 @@
     $meteor23LRPT1->centerFrequency->set(137900000);
     $meteor23LRPT1->modulation->set($lrpt);
     $meteor23LRPT1->antenna->set($qfh);
+    $meteor23LRPT1->priority->set(3);
     $meteor23LRPT1->processPipe->set($lrptPipe);
     $meteor23LRPT1->commit();
 

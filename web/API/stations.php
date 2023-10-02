@@ -25,12 +25,13 @@
                 $transmitter->id->set($targetId);
                 $transmitter->fetch();
 
-                //get locator and nano and transmitter
+                //get locator and name and transmitter
                 $res[] = [
                     "name"        => $transmitter->target->get()->name->get(),
                     "locator"     => $transmitter->target->get()->locator->get(),
                     "transmitter" => $transmitter->id->get(),
-                    "receiver"    => $receiver->id->get()
+                    "receiver"    => $receiver->id->get(),
+                    "priority"    => $transmitter->priority->get()
                 ];
             }
         }
