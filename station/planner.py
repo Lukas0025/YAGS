@@ -41,6 +41,8 @@ def plan(lat, lon, alt, tle, transmitter, receiver, priority, name, delta = time
             "priority":    priority
         })
 
+    return plans
+
 def planAll(location):
     planeble = puller.getPlaneble()
     plans    = []
@@ -53,7 +55,7 @@ def planAll(location):
             transmitter["locator"]["tle"],
             transmitter["transmitter"],
             transmitter["receiver"],
-            transmitter["priority"]
+            transmitter["priority"],
             transmitter["name"]
         )
 
@@ -61,11 +63,11 @@ def planAll(location):
 
     i = 0
     while i + 1 < len(plans):
-        if plan[i]["end"] < plan[i + 1]["start"]:
-            puller.plan(plan[i]["transmitter"], plan[i]["receiver"], plan[i]["start"], plan[i]["end"])
+        if plans[i]["end"] < plans[i + 1]["start"]:
+            puller.plan(plans[i]["transmitter"], plans[i]["receiver"], plans[i]["start"], plans[i]["end"])
             i += 1
         
-        elif plan[i]["priority"] > plan[i + 1]["priority"]:
-            plan.pop(i + 1)
+        elif plans[i]["priority"] > plans[i + 1]["priority"]:
+            plans.pop(i + 1)
         else:
             i += 1

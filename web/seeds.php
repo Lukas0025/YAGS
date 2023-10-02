@@ -12,9 +12,13 @@
     $satType->name->set("sat");
     $satType->commit();
 
-    $wetImgType = new \DAL\dataType();
-    $wetImgType->name->set("AVHRR");
-    $wetImgType->commit();
+    $avhrrType = new \DAL\dataType();
+    $avhrrType->name->set("AVHRR");
+    $avhrrType->commit();
+
+    $msumrType = new \DAL\dataType();
+    $msumrType->name->set("MSU-MR");
+    $msumrType->commit();
 
     /**
      * Antennas seeds
@@ -101,12 +105,11 @@
     /**
      * Process pipes
      */
-
     $aptPipe = new \DAL\processPipe();
     $aptPipe->name->set("NOAA APT");
     $aptPipe->pipe->set([
         "satdump noaa_apt baseband {baseband} {artefactDir} --samplerate {fs} --baseband_format s8",
-        "cp {baseband} {artefactDir}"
+        "cp {baseband} {artefactDir}/{freq}_{fs}.s8"
     ]);
 
     $aptPipe->commit();
@@ -115,7 +118,7 @@
     $lrptPipe->name->set("METEOR LRPT");
     $lrptPipe->pipe->set([
         "satdump meteor_m2-x_lrpt baseband {baseband} {artefactDir} --samplerate {fs} --baseband_format s8",
-        "cp {baseband} {artefactDir}"
+        "cp {baseband} {artefactDir}/{freq}_{fs}.s8"
     ]);
 
     $lrptPipe->commit();
@@ -138,7 +141,7 @@
 
     $noaa19APT = new \DAL\transmitter();
     $noaa19APT->target->set($noaa19);
-    $noaa19APT->dataType->set($wetImgType);
+    $noaa19APT->dataType->set($avhrrType);
     $noaa19APT->bandwidth->set(34000);
     $noaa19APT->centerFrequency->set(137100000);
     $noaa19APT->modulation->set($apt);
@@ -149,7 +152,7 @@
 
     $noaa19DSB = new \DAL\transmitter();
     $noaa19DSB->target->set($noaa19);
-    $noaa19DSB->dataType->set($wetImgType);
+    $noaa19DSB->dataType->set($avhrrType);
     $noaa19DSB->bandwidth->set(34000);
     $noaa19DSB->centerFrequency->set(137770000);
     $noaa19DSB->modulation->set($dsb);
@@ -158,7 +161,7 @@
 
     $noaa19HRPT = new \DAL\transmitter();
     $noaa19HRPT->target->set($noaa19);
-    $noaa19HRPT->dataType->set($wetImgType);
+    $noaa19HRPT->dataType->set($avhrrType);
     $noaa19HRPT->bandwidth->set(3000000);
     $noaa19HRPT->centerFrequency->set(1698000000);
     $noaa19HRPT->modulation->set($hrpt);
@@ -182,7 +185,7 @@
 
     $noaa18APT = new \DAL\transmitter();
     $noaa18APT->target->set($noaa18);
-    $noaa18APT->dataType->set($wetImgType);
+    $noaa18APT->dataType->set($avhrrType);
     $noaa18APT->bandwidth->set(34000);
     $noaa18APT->centerFrequency->set(137912500);
     $noaa18APT->modulation->set($apt);
@@ -193,7 +196,7 @@
 
     $noaa18DSB = new \DAL\transmitter();
     $noaa18DSB->target->set($noaa18);
-    $noaa18DSB->dataType->set($wetImgType);
+    $noaa18DSB->dataType->set($avhrrType);
     $noaa18DSB->bandwidth->set(34000);
     $noaa18DSB->centerFrequency->set(137350000);
     $noaa18DSB->modulation->set($dsb);
@@ -202,7 +205,7 @@
 
     $noaa18HRPT = new \DAL\transmitter();
     $noaa18HRPT->target->set($noaa18);
-    $noaa18HRPT->dataType->set($wetImgType);
+    $noaa18HRPT->dataType->set($avhrrType);
     $noaa18HRPT->bandwidth->set(3000000);
     $noaa18HRPT->centerFrequency->set(1707000000);
     $noaa18HRPT->modulation->set($hrpt);
@@ -226,7 +229,7 @@
 
     $noaa15APT = new \DAL\transmitter();
     $noaa15APT->target->set($noaa15);
-    $noaa15APT->dataType->set($wetImgType);
+    $noaa15APT->dataType->set($avhrrType);
     $noaa15APT->bandwidth->set(34000);
     $noaa15APT->centerFrequency->set(137500000);
     $noaa15APT->modulation->set($apt);
@@ -237,7 +240,7 @@
 
     $noaa15DSB = new \DAL\transmitter();
     $noaa15DSB->target->set($noaa15);
-    $noaa15DSB->dataType->set($wetImgType);
+    $noaa15DSB->dataType->set($avhrrType);
     $noaa15DSB->bandwidth->set(34000);
     $noaa15DSB->centerFrequency->set(1377700000);
     $noaa15DSB->modulation->set($dsb);
@@ -246,7 +249,7 @@
 
     $noaa15HRPT = new \DAL\transmitter();
     $noaa15HRPT->target->set($noaa15);
-    $noaa15HRPT->dataType->set($wetImgType);
+    $noaa15HRPT->dataType->set($avhrrType);
     $noaa15HRPT->bandwidth->set(3000000);
     $noaa15HRPT->centerFrequency->set(1702500000);
     $noaa15HRPT->modulation->set($hrpt);
@@ -267,7 +270,7 @@
 
     $meteor23LRPT1 = new \DAL\transmitter();
     $meteor23LRPT1->target->set($meteor23);
-    $meteor23LRPT1->dataType->set($wetImgType);
+    $meteor23LRPT1->dataType->set($msumrType);
     $meteor23LRPT1->bandwidth->set(120000);
     $meteor23LRPT1->centerFrequency->set(137900000);
     $meteor23LRPT1->modulation->set($lrpt);
@@ -278,7 +281,7 @@
 
     $meteor23LRPT2 = new \DAL\transmitter();
     $meteor23LRPT2->target->set($meteor23);
-    $meteor23LRPT2->dataType->set($wetImgType);
+    $meteor23LRPT2->dataType->set($msumrType);
     $meteor23LRPT2->bandwidth->set(120000);
     $meteor23LRPT2->centerFrequency->set(137100000);
     $meteor23LRPT2->modulation->set($lrpt);
@@ -288,7 +291,7 @@
 
     $meteor23HRPT = new \DAL\transmitter();
     $meteor23HRPT->target->set($meteor23);
-    $meteor23HRPT->dataType->set($wetImgType);
+    $meteor23HRPT->dataType->set($msumrType);
     $meteor23HRPT->bandwidth->set(3000000);
     $meteor23HRPT->centerFrequency->set(1700000000);
     $meteor23HRPT->modulation->set($hrpt);

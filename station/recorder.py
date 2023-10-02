@@ -59,16 +59,15 @@ class recorder(threading.Thread):
 
         puller.setDecoding(self.job["id"])
 
-        pipe = " && ".join(self.job["proccessPipe"])
-
         #create artecats dir
         adir = f"artefacts/{self.job['id']}"
         os.makedirs(adir)
 
-        #ok now replace 
-        pipe = pipe.replace("{baseband}", str(baseband) + ".s8").replace("{fs}", str(fs)).replace("{artefactDir}", str(adir))
+        for pipe in self.job["proccessPipe"]:
+            #ok now replace 
+            pipe = pipe.replace("{baseband}", str(baseband) + ".s8").replace("{fs}", str(fs)).replace("{artefactDir}", str(adir)).replace("{freq}", str(self.job['transmitter']['centerFrequency']))
 
-        os.system(pipe)
+            os.system(pipe)
 
         puller.setSuccess(self.job["id"])
 
