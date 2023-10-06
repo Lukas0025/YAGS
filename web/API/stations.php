@@ -49,3 +49,22 @@
 
         return $res;
     }
+
+    function add($params) {
+        $stations  = new \wsos\database\core\table(\DAL\station::class);
+
+        $myStation = new \DAL\station();
+        $myStation->name->set($params["name"]);
+        $myStation->description->set($params["description"]);
+        $myStation->locator->set([
+            "gps" => [
+                "lat" => floatval($params["lat"]),
+                "lon" => floatval($params["lon"]),
+                "alt" => floatval($params["alt"])
+            ] 
+        ]);
+
+        $myStation->commit();
+
+        return ["id" => $myStation->id->get()];
+    }

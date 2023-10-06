@@ -134,6 +134,9 @@
                       <div class="card">
                         <div class="card-header">
                           <h3 class="card-title">Stations</h3>
+                          <button type="button" class="btn btn-primary ms-auto" data-bs-toggle="modal" onclick="updateStationMap()" data-bs-target="#newStationModal">
+                            + Add
+                          </button>
                         </div>
                         <div class="scrollable" style="height: 274px;">
                           <table class="table card-table table-vcenter">
@@ -182,6 +185,68 @@
                 </div>
               </div>
 
+              <div class="modal" id="newStationModal" tabindex="-1">
+                <div class="modal-dialog modal-lg" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title">New station</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <div class="row">
+                        <div class="col-lg-12">
+                          <div class="mb-3">
+                            <label class="form-label">Station name</label>
+                            <input class="form-control" type="text" id="station-name">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal-body">
+                      <div class="row">
+                        <div class="col-lg-6">
+                          <div class="mb-3">
+                            <label class="form-label">Station LAT</label>
+                            <input type="number" step="0.001" id="station-lat" placeholder="0.0" onchange="updateStationMap()" class="form-control">
+                          </div>
+                        </div>
+                        <div class="col-lg-6">
+                          <div class="mb-3">
+                            <label class="form-label">Station LON</label>
+                            <input type="number" step="0.001" id="station-lon" placeholder="0.0" onchange="updateStationMap()" class="form-control">
+                          </div>
+                        </div>
+
+                        <div id="stationMap" style="height:200px;" class="mt-1 w-100">
+                        </div>
+
+                        <div class="col-lg-12 mt-3">
+                          <div class="mb-3">
+                            <label class="form-label">Station Altitude [meters]</label>
+                            <input type="number" step="1" id="station-alt" placeholder="0" class="form-control">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal-body">
+                      <div class="row">
+                        <div class="col-lg-12">
+                          <div class="mb-3">
+                            <label class="form-label">Station description</label>
+                            <textarea class="form-control" id="station-description"></textarea>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn me-auto" data-bs-dismiss="modal">Close</button>
+                      <button type="button" onclick="addStation()" class="btn btn-primary" data-bs-dismiss="modal">Add</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <script src="/static/js/dashboard.js"></script>
             <!-- Tabler Core -->
             <script src="./dist/js/tabler.min.js?1668287865" defer=""></script>
         </div>
