@@ -22,6 +22,7 @@
             "datatypes"    => ["controller" => __DIR__ . "/CONTROLLERS/datatypes.php",    "name" => "Data Types",   "icon" => "/static/icons/file-analytics.svg", "menu" => true],
             */
             "observation"  => ["controller" => __DIR__ . "/CONTROLLERS/observation.php",  "name" => "Observation view",                                           "menu" => false],
+            "station"      => ["controller" => __DIR__ . "/CONTROLLERS/station.php",      "name" => "Station view",                                               "menu" => false],
             "login"        => ["controller" => __DIR__ . "/CONTROLLERS/login.php",        "name" => "Login",                                                      "menu" => false],
             "api"          => ["controller" => __DIR__ . "/API/main.php",                 "name" => "api",                                                        "menu" => false],
         ],

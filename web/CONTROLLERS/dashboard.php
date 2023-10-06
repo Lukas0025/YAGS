@@ -75,6 +75,7 @@
     $stations                     = (new \wsos\database\core\table(\DAL\station::class))->getAll()->values;
     foreach ($stations as $station) {
         $context["stations"][] = [
+            "id"           => $station->id->get(),
             "name"         => $station->name->get(),
             "observations" => $observationTable->count("receiver.station.id == ?", [$station->id->get()]),
             "lastSeen"     => $station->lastSeen->strDelta()

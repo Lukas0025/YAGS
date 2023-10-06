@@ -29,7 +29,7 @@ def plan(lat, lon, alt, tle, transmitter, receiver, priority, name, delta = time
         start = ob[0]
         end   = ob[1]
 
-        if start <= last:
+        if start <= (last + timedelta(seconds=60)): # must be minute after last
             print(f"[INFO] alredy planed {name} at {start}")
             continue
 

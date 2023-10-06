@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+{% INCLUDE layout/head.html %}
+
+<body>
+  <div class="page">
+    {% BINDINCLUDE layout/header.html logined %}
+
+    <div class="page-header d-print-none mt-4">
+      <div class="container-xl">
+        <div class="row g-2 align-items-center">
+          <div class="col">
+            <div class="page-pretitle">
+              {% BIND station.id %}
+            </div>
+            <h2 class="page-title">
+              Station {% BIND station.name %}
+            </h2>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-body">
+      <div class="container-xl">
+        <div class="row row-deck row-cards">
+
+          <div class="col-12">
+            <div class="row row-cards">
+              <div class="col-12">
+                <div class="card">
+                  <div class="card-header">
+                    <h3 class="card-title">Base info</h3>
+                  </div>
+                  <div class="card-body">
+                    <div class="datagrid">
+                      <div class="datagrid-item">
+                        <div class="datagrid-title">Name</div>
+                        <div class="datagrid-content">
+                          {% BIND station.name %}
+                        </div>
+                      </div>
+                      <div class="datagrid-item">
+                        <div class="datagrid-title">GPS LAT</div>
+                        <div class="datagrid-content"><a
+                            href="https://www.google.com/maps/place/{% BIND station.lat %},{% BIND station.lon %}">
+                            {% BIND station.lat %}
+                          </a></div>
+                      </div>
+                      <div class="datagrid-item">
+                        <div class="datagrid-title">GPS LON</div>
+                        <div class="datagrid-content"><a
+                            href="https://www.google.com/maps/place/{% BIND station.lat %},{% BIND station.lon %}">
+                            {% BIND station.lon %}
+                          </a></div>
+                      </div>
+                      <div class="datagrid-item">
+                        <div class="datagrid-title">GPS ALT</div>
+                        <div class="datagrid-content">{% BIND station.alt %}m</div>
+                      </div>
+                      <div class="datagrid-item">
+                        <div class="datagrid-title">Last seen</div>
+                        <div class="datagrid-content">ago {% BIND station.lastSeen %}</div>
+                      </div>
+                      <div class="datagrid-item">
+                        <div class="datagrid-title">API Key</div>
+                        <div class="datagrid-content">
+                          <span class="status" style="font-size: 10px;">{% BIND station.apiKey %}</span>
+                        </div>
+                      </div>
+                      <div class="datagrid-item">
+                        <div class="datagrid-title">Success observations</div>
+                        <div class="datagrid-content">{% BIND station.success %}</div>
+                      </div>
+                      <div class="datagrid-item">
+                        <div class="datagrid-title">Fail observations</div>
+                        <div class="datagrid-content">{% BIND station.fail %}</div>
+                      </div>
+                      </div>
+                      <hr>
+                      <div class="col-12">
+                        <div class="datagrid-title">Description</div>
+                        <div class="datagrid-content">{% BIND station.description %}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-6">
+              <div class="row row-cards">
+                <div class="col-12">
+                  <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title">Station receivers</h3>
+                    </div>
+                    <div class="table-responsive scrollable" style="height: 400px">
+                      <table class="table card-table table-vcenter text-nowrap datatable table-hover">
+                        <thead>
+                          <tr>
+                            <th>Frequency</th>
+                            <th>Bandwidth</th>
+                            <th>Gain</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% FOREACH receivers RENDER blocks/receiver-item.html %}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-6">
+              <div class="row row-cards">
+                <div class="col-12">
+                  <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title">Station rotators</h3>
+                    </div>
+                    <div class="table-responsive scrollable" style="height: 400px">
+                      <table class="table card-table table-vcenter text-nowrap datatable table-hover">
+                        <thead>
+                          <tr>
+                            <th>Driver</th>
+                            <th>Port/Host</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            
+            
+          </div>
+        </div>
+
+        <!-- Tabler Core -->
+        <script src="/dist/js/tabler.min.js?1668287865" defer=""></script>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
