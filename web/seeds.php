@@ -109,6 +109,7 @@
     $aptPipe->name->set("NOAA APT");
     $aptPipe->pipe->set([
         "satdump noaa_apt baseband {baseband} {artefactDir} --samplerate {fs} --satellite_number {targetNum} --start_timestamp {start} --autocrop_wedges --baseband_format s8",
+        "baseband_spectogram.py {baseband} {artefactDir}/spectogram.png -fs {fs} -fc {freq}",
         "cp {baseband} {artefactDir}/{freq}_{fs}.s8"
     ]);
 
@@ -118,6 +119,7 @@
     $lrptPipe->name->set("METEOR LRPT");
     $lrptPipe->pipe->set([
         "satdump meteor_m2-x_lrpt baseband {baseband} {artefactDir} --samplerate {fs} --baseband_format s8",
+        "baseband_spectogram.py {baseband} {artefactDir}/spectogram.png -fs {fs} -fc {freq}",
         "cp {baseband} {artefactDir}/{freq}_{fs}.s8"
     ]);
 
@@ -234,7 +236,7 @@
     $noaa15APT->target->set($noaa15);
     $noaa15APT->dataType->set($avhrrType);
     $noaa15APT->bandwidth->set(34000);
-    $noaa15APT->centerFrequency->set(137500000);
+    $noaa15APT->centerFrequency->set(137620000);
     $noaa15APT->modulation->set($apt);
     $noaa15APT->antenna->set($qfh);
     $noaa15APT->priority->set(0);
