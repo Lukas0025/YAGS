@@ -48,11 +48,11 @@ class recorder(threading.Thread):
 
         time.sleep(50)
 
-        realStart = datetime.datetime.utcnow().timestamp()
+        realStart = int(datetime.datetime.now(tz=datetime.timezone.utc).timestamp())
 
         os.system(f"satdump record {baseband} --source {self.job['receiver']['params']['radio']} --samplerate {fs} --frequency {self.job['transmitter']['centerFrequency']} --gain {self.job['receiver']['params']['gain']} --baseband_format s8 --timeout {recordTime}")
 
-        realEnd   = datetime.datetime.utcnow().timestamp()
+        realEnd   = int(datetime.datetime.now(tz=datetime.timezone.utc).timestamp())
 
         print(f"Recorder for job {self.job['target']['name']} stoped")
 
