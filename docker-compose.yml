@@ -8,3 +8,7 @@ services:
     volumes:
       - yagsDb:/var/www/html/DB
       - yagsData:/var/www/html/ARTEFACTS
+
+volumes:
+  yagsDb:
+  yagsData:
