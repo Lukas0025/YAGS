@@ -5,3 +5,6 @@ services:
     build: ./web
     ports:
       - 80:80
+    volumes:
+      - yagsDb:/var/www/html/DB
+      - yagsData:/var/www/html/ARTEFACTS
