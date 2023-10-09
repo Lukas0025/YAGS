@@ -12,14 +12,18 @@
 
     $targets = (new \wsos\database\core\table(\DAL\target::class))->getAll();
 
+    // create planed template observations
+    $ob = new \DAL\observation();
+
     foreach ($targets->values as $target) {
 
-        $last = (new \wsos\database\core\table(\DAL\observation::class))->query("transmitter.target.id = ?", [$target->id->get()], "DESC end", 1);
+        $last = (new \wsos\database\core\table(\DAL\observation::class))->query("transmitter.target.id == ? && status == ?", [$target->id->get(), $ob->status->getVal("success")], "DESC end", 1);
         $last = $last->len() > 0 ? "ago " . $last->values[0]->end->strDelta() : "never";
 
-        $observations = (new \wsos\database\core\table(\DAL\observation::class))->count("transmitter.target.id = ?", [$target->id->get()]);
+        $observations = (new \wsos\database\core\table(\DAL\observation::class))->count("transmitter.target.id == ?", [$target->id->get()]);
 
         $context["targets"]->append([
+            "id"    => $target->id->get(),
             "name"  => $target->name->get(),
             "orbit" => $target->orbit->get(),
             "type"  => $target->type->get()->name->get(),
