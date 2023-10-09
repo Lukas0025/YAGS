@@ -141,6 +141,60 @@
               </div>
             </div>
 
+            <div class="col-md-6 col-lg-12">
+              <div class="card">
+                <div class="card-status-start bg-danger"></div>
+                <div class="card-body">
+                  <h3 class="card-title">Station basic info</h3>
+                  <div class="row g-3">
+                    <div class="col-md">
+                      <div class="form-label">Name</div>
+                      <input type="text" class="form-control" value="{% BIND station.name %}" id="station-name">
+                    </div>
+                  </div>
+                  <div class="row g-3 mt-2">
+                    <div class="col-md">
+                      <div class="form-label">Description</div>
+                      <textarea class="form-control" id="station-description">{% BIND station.description %}</textarea>
+                    </div>
+                  </div>
+                  <h3 class="card-title mt-4">Station location</h3>
+                  <div class="row g-3">
+                    <div class="col-md">
+                      <div class="form-label">Latitude</div>
+                      <input type="number" class="form-control" id="station-lat" value="{% BIND station.lat %}">
+                    </div>
+                    <div class="col-md">
+                      <div class="form-label">Longitude</div>
+                      <input type="number" class="form-control" id="station-lon" value="{% BIND station.lon %}">
+                    </div>
+                    <div class="col-md">
+                      <div class="form-label">Altitude [m]</div>
+                      <input type="number" class="form-control" id="station-alt" value="{% BIND station.alt %}">
+                    </div>
+                  </div>
+                  
+                  <h3 class="card-title mt-4">API Key</h3>
+                  <p class="card-subtitle">API key is used for access to YAGS server from others programs like yags-station.</p>
+                  <div>
+                    <a class="btn" onclick="apiRegenerate('{% BIND station.id %}')">
+                      Regenerate API Key
+                    </a>
+                  </div>
+                </div>
+                <div class="card-footer bg-transparent mt-auto">
+                  <div class="btn-list justify-content-end">
+                    <a href="#" class="btn btn-ghost-danger" onclick="deleteStation('{% BIND station.id %}')">
+                      Delete station
+                    </a>
+                    <a class="btn btn-primary" onclick="updateStation('{% BIND station.id %}')">
+                      Update station
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             
             
           </div>
@@ -148,6 +202,7 @@
 
         <!-- Tabler Core -->
         <script src="/dist/js/tabler.min.js?1668287865" defer=""></script>
+        <script src="/static/js/station.js" defer=""></script>
       </div>
     </div>
   </div>

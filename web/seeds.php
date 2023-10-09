@@ -8,9 +8,9 @@
     $admin->admin->set(true);
     $admin->commit(); /* commit changes to DB */
 
-    $satType = new \DAL\targetType();
-    $satType->name->set("sat");
-    $satType->commit();
+    $leoWSatTape = new \DAL\targetType();
+    $leoWSatTape->name->set("Weather Satellite");
+    $leoWSatTape->commit();
 
     $avhrrType = new \DAL\dataType();
     $avhrrType->name->set("AVHRR");
@@ -108,7 +108,7 @@
     $aptPipe = new \DAL\processPipe();
     $aptPipe->name->set("NOAA APT");
     $aptPipe->pipe->set([
-        "satdump noaa_apt baseband {baseband} {artefactDir} --samplerate {fs} --baseband_format s8",
+        "satdump noaa_apt baseband {baseband} {artefactDir} --samplerate {fs} --satellite_number {targetNum} --start_timestamp {start} --autocrop_wedges --baseband_format s8",
         "cp {baseband} {artefactDir}/{freq}_{fs}.s8"
     ]);
 
@@ -129,7 +129,8 @@
      */
     $noaa19 = new \DAL\target();
     $noaa19->name->set("NOAA 19");
-    $noaa19->type->set($satType);
+    $noaa19->type->set($leoWSatTape);
+    $noaa19->orbit->set("leo");
     $noaa19->description->set("NOAA 19 is the fifth in a series of five Polar-orbiting Operational Environmental Satellites (POES) with advanced microwave sounding instruments that provide imaging and sounding capabilities.");
     $noaa19->locator->set([
         "tle" => [
@@ -173,7 +174,8 @@
      */
     $noaa18 = new \DAL\target();
     $noaa18->name->set("NOAA 18");
-    $noaa18->type->set($satType);
+    $noaa18->type->set($leoWSatTape);
+    $noaa18->orbit->set("leo");
     $noaa18->description->set("NOAA 18, known before launch as NOAA-N, is a weather forecasting satellite run by NOAA. NOAA-N (18) was launched into a sun-synchronous orbit at an altitude of 854 km above the Earth, with an orbital period of 102 minutes. It hosts the AMSU-A, MHS, AVHRR, Space Environment Monitor SEM/2 instrument and High Resolution Infrared Radiation Sounder (HIRS) instruments, as well as the SBUV/2 ozone-monitoring instrument.");
     $noaa18->locator->set([
         "tle" => [
@@ -217,7 +219,8 @@
      */
     $noaa15 = new \DAL\target();
     $noaa15->name->set("NOAA 15");
-    $noaa15->type->set($satType);
+    $noaa15->type->set($leoWSatTape);
+    $noaa15->orbit->set("leo");
     $noaa15->description->set("");
     $noaa15->locator->set([
         "tle" => [
@@ -258,7 +261,8 @@
 
     $meteor23 = new \DAL\target();
     $meteor23->name->set("METEOR M2-3");
-    $meteor23->type->set($satType);
+    $meteor23->type->set($leoWSatTape);
+    $meteor23->orbit->set("leo");
     $meteor23->description->set("");
     $meteor23->locator->set([
         "tle" => [

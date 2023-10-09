@@ -39,17 +39,6 @@
         return $res;
     }
 
-    function keys($params) {
-        $stations  = new \wsos\database\core\table(\DAL\station::class);
-
-        $res = [];
-        foreach ($stations->getAll()->values as $station) {
-            $res[] = ["name" => $station->name->get(), "key" => $station->apiKey->get()];
-        }
-
-        return $res;
-    }
-
     function add($params) {
         $stations  = new \wsos\database\core\table(\DAL\station::class);
 
@@ -63,6 +52,42 @@
                 "alt" => floatval($params["alt"])
             ] 
         ]);
+
+        $myStation->commit();
+
+        return ["id" => $myStation->id->get()];
+    }
+
+    function update($params) {
+        $stations  = new \wsos\database\core\table(\DAL\station::class);
+
+        $myStation = new \DAL\station();
+        $myStation->id->set($params["id"]);
+        $myStation->fetch();
+
+        $myStation->name->set($params["name"]);
+        $myStation->description->set($params["description"]);
+        $myStation->locator->set([
+            "gps" => [
+                "lat" => floatval($params["lat"]),
+                "lon" => floatval($params["lon"]),
+                "alt" => floatval($params["alt"])
+            ] 
+        ]);
+
+        $myStation->commit();
+
+        return ["id" => $myStation->id->get()];
+    }
+
+    function apiRegenerate($params) {
+        $stations  = new \wsos\database\core\table(\DAL\station::class);
+
+        $myStation = new \DAL\station();
+        $myStation->id->set($params["id"]);
+        $myStation->fetch();
+        
+        $myStation->apiKey->regenerate();
 
         $myStation->commit();
 

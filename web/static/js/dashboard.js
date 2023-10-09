@@ -15,9 +15,9 @@ function addStation() {
 
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            alert(JSON.parse(this.responseText).id);
-        }
+      if (this.readyState == 4 && this.status == 200) {
+        window.location.href = "/station/" + JSON.parse(this.responseText).id;
+      }
     };
 
     xhttp.open("POST", "/api/station/add", true);

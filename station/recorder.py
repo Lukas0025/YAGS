@@ -6,6 +6,7 @@ from simplecom import simplecom
 from pathlib import Path
 import config
 import time
+import datetime
 
 # A recursive function to remove the folder
 def del_folder(path):
@@ -47,7 +48,11 @@ class recorder(threading.Thread):
 
         time.sleep(50)
 
+        realStart = datetime.datetime.utcnow().timestamp()
+
         os.system(f"satdump record {baseband} --source {self.job['receiver']['params']['radio']} --samplerate {fs} --frequency {self.job['transmitter']['centerFrequency']} --gain {self.job['receiver']['params']['gain']} --baseband_format s8 --timeout {recordTime}")
+
+        realEnd   = datetime.datetime.utcnow().timestamp()
 
         print(f"Recorder for job {self.job['target']['name']} stoped")
 
@@ -63,9 +68,21 @@ class recorder(threading.Thread):
         adir = f"artefacts/{self.job['id']}"
         os.makedirs(adir)
 
+        replacements = {
+            "{baseband}":    str(baseband) + ".s8",
+            "{fs}":          str(fs),
+            "{artefactDir}": str(adir),
+            "{freq}":        str(self.job['transmitter']['centerFrequency']),
+            "{targetNum}":   ''.join(x for x in self.job['target']['name'] if x.isdigit()),
+            "{target}":      self.job['target']['name'],
+            "{start}":       str(realStart),
+            "{end}":         str(realEnd)     
+        }
+
         for pipe in self.job["proccessPipe"]:
             #ok now replace 
-            pipe = pipe.replace("{baseband}", str(baseband) + ".s8").replace("{fs}", str(fs)).replace("{artefactDir}", str(adir)).replace("{freq}", str(self.job['transmitter']['centerFrequency']))
+            for k, v in replacements.items():
+                pipe = pipe.replace(k, v)
 
             os.system(pipe)
 

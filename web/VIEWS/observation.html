@@ -214,6 +214,13 @@
             return parts[parts.length - 1].toLowerCase();
           }
 
+          const getMeta = (url, cb) => {
+            const img = new Image();
+            img.onload = () => cb(null, img);
+            img.onerror = (err) => cb(err);
+            img.src = url;
+          };
+
           function art(el) {
             var url  = el.getAttribute("value");
             var name = el.innerHTML;
@@ -221,7 +228,15 @@
             document.getElementById("artefact-title").innerHTML = name;
 
             if (extension(name) == "png" || extension(name) == "jpg" ) {
-              document.getElementById("artefact-body") .innerHTML = "<img src='" + url + "'>";
+              getMeta(url, (err, img) => {
+                var ratio = img.naturalWidth / img.naturalHeight;
+
+                if (ratio < 1) { // height is bigger
+                  document.getElementById("artefact-body") .innerHTML = "<img src='" + url + "' style='max-width: 500px; margin: auto;'>";
+                } else {         // width is bigger
+                  document.getElementById("artefact-body") .innerHTML = "<img src='" + url + "'>";
+                }
+              });
             } else if (extension(name) == "json" || extension(name) == "txt" ) {
               var request = new XMLHttpRequest();
               request.open('GET', url, true);

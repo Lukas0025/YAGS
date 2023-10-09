@@ -15,9 +15,9 @@
     $sites = [
         "sites" => [
             "observations" => ["controller" => __DIR__ . "/CONTROLLERS/observations.php", "name" => "Observations", "icon" => "/static/icons/telescope.svg",      "menu" => true],
+            "targets"      => ["controller" => __DIR__ . "/CONTROLLERS/targets.php",      "name" => "Targets",      "icon" => "/static/icons/focus-2.svg",        "menu" => true],
             /*
             "stations"     => ["controller" => __DIR__ . "/CONTROLLERS/stations.php",     "name" => "Stations",     "icon" => "/static/icons/radio.svg",          "menu" => true],
-            "targets"      => ["controller" => __DIR__ . "/CONTROLLERS/targets.php",      "name" => "Targets",      "icon" => "/static/icons/focus-2.svg",        "menu" => true],
             "modulations"  => ["controller" => __DIR__ . "/CONTROLLERS/modulations.php",  "name" => "Modulations",  "icon" => "/static/icons/wave-sine.svg",      "menu" => true],
             "datatypes"    => ["controller" => __DIR__ . "/CONTROLLERS/datatypes.php",    "name" => "Data Types",   "icon" => "/static/icons/file-analytics.svg", "menu" => true],
             */
