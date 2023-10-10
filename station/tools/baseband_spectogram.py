@@ -10,7 +10,7 @@ if __name__ == '__main__':
     
     cliParser.add_argument('input_file',  type=str, help='input filename')
     cliParser.add_argument('output_file', type=str, help='output filename')
-    cliParser.add_argument('-fs', '--sampleRate',  type=float, help='sets the sample rate [hz]')    
+    cliParser.add_argument('-fs', '--sampleRate', type=float, help='sets the sample rate [hz]')    
     cliParser.add_argument('-fc', '--centralFreq', type=float, help='sets the sample rate [hz]')    
     
     cliParser.add_argument('-f', '--format', type=str, 
@@ -20,22 +20,45 @@ if __name__ == '__main__':
 
     args = cliParser.parse_args()
     
-    data = np.fromfile(args.input_file, dtype=args.format)
-    
-    data = data[1::2] + 1j * data[0::2]
+    data = np.memmap(args.input_file, dtype=args.format, mode="r")
     
     fft_size    = 1024
-    sample_rate = args.sampleRate
-    Fc          = args.centralFreq
-    num_rows    = len(data) // fft_size # // is an integer division which rounds down
+    sampleSize  = 2 # I and Q
+        
+    sample_rate   = args.sampleRate
+    Fc            = args.centralFreq
+    num_rows      = len(data) // fft_size // sampleSize
+
+    # ok compute how many data to one row
+    num_rows_real = 100
+    if num_rows < num_rows_real:
+        num_rows_real = num_rows
+
+    abstract_rows_per_row = int(num_rows / num_rows_real)
     
-    spectrogram = np.zeros((num_rows, fft_size))
+    spectrogram = np.zeros((num_rows_real, fft_size))
     
-    for i in range(num_rows):
-        spectrogram[i,:] = 10 * np.log10(np.abs(np.fft.fftshift(np.fft.fft(data[i*fft_size:(i+1)*fft_size])))**2)
+    sub_fft = None
+    for i in range(abstract_rows_per_row * num_rows_real):
+
+        subdata_start = i * sampleSize * fft_size
+        subdata = data[subdata_start : subdata_start + fft_size * sampleSize]
+        
+        subdata = subdata[1::2] + 1j * subdata[0::2] # convert to complex
+        
+        cur_fft = 10 * np.log10(np.abs(np.fft.fftshift(np.fft.fft(subdata)))**2)
+            
+        if sub_fft is None:
+            sub_fft = cur_fft
+        else:
+            sub_fft = np.mean(np.array([cur_fft, sub_fft]), axis=0) 
+        
+        if i % abstract_rows_per_row == 0:
+            img_row = int(i // abstract_rows_per_row)
+            spectrogram[img_row,:] = sub_fft
+            sub_fft          = None
         
     fig = plt.figure(figsize=(5, num_rows / sample_rate * 20))
-    
     plt.imshow(spectrogram, cmap=plt.get_cmap('winter'), aspect='auto', extent = [sample_rate/-2/1e6 + Fc/1e6, sample_rate/2/1e6 + Fc/1e6, 0, len(data)/sample_rate], vmin=0, vmax=np.max(spectrogram))
     plt.xlabel("Frequency [MHz]")
     plt.ylabel("Time [s]")

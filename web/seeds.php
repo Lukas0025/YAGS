@@ -12,6 +12,10 @@
     $leoWSatTape->name->set("Weather Satellite");
     $leoWSatTape->commit();
 
+    $nanosatelliteType = new \DAL\targetType();
+    $nanosatelliteType->name->set("Nanosatellite");
+    $nanosatelliteType->commit();
+
     $avhrrType = new \DAL\dataType();
     $avhrrType->name->set("AVHRR");
     $avhrrType->commit();
@@ -19,6 +23,10 @@
     $msumrType = new \DAL\dataType();
     $msumrType->name->set("MSU-MR");
     $msumrType->commit();
+
+    $telemetryType = new \DAL\dataType();
+    $telemetryType->name->set("Telemetry");
+    $telemetryType->commit();
 
     /**
      * Antennas seeds
@@ -101,6 +109,10 @@
     $lrpt = new \DAL\modulation();
     $lrpt->name->set("LRPT");
     $lrpt->commit();
+
+    $cw = new \DAL\modulation();
+    $cw->name->set("CW");
+    $cw->commit();
 
     /**
      * Process pipes
@@ -304,12 +316,37 @@
     $meteor23HRPT->antenna->set($qfh);
     $meteor23HRPT->commit();
 
+    $maxvalier = new \DAL\target();
+    $maxvalier->name->set("MAX VALIER SAT");
+    $maxvalier->type->set($nanosatelliteType);
+    $maxvalier->orbit->set("leo");
+    $maxvalier->description->set("");
+    $maxvalier->locator->set([
+        "tle" => [
+            "line1" => "1 42778U 17036P   23282.84620820  .00050788  00000-0  10567-2 0  9991",
+            "line2" => "2 42778  97.1421 315.3778 0008233  57.6254 302.5791 15.45432755350391"
+        ]
+    ]);
+    $maxvalier->commit();
+
+    $maxvalierCW = new \DAL\transmitter();
+    $maxvalierCW->target->set($maxvalier);
+    $maxvalierCW->dataType->set($telemetryType);
+    $maxvalierCW->bandwidth->set(120000);
+    $maxvalierCW->centerFrequency->set(145960000);
+    $maxvalierCW->modulation->set($cw);
+    $maxvalierCW->antenna->set($yagi);
+    $maxvalierCW->priority->set(0);
+    $maxvalierCW->processPipe->set($spectogramPipe);
+    $maxvalierCW->commit();
+
     // add autoplas
     $myStation137->autoPlan->set([
         $noaa15APT->id->get(),
         $noaa18APT->id->get(),
         $noaa19APT->id->get(),
-        $meteor23LRPT1->id->get()
+        $meteor23LRPT1->id->get(),
+        $maxvalierCW->id->get()
     ]);
 
     $myStation137->commit();
