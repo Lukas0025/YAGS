@@ -225,7 +225,7 @@
             var url  = el.getAttribute("value");
             var name = el.innerHTML;
 
-            document.getElementById("artefact-title").innerHTML = name;
+            document.getElementById("artefact-title").innerHTML = name + " <a href='" + url + "' download><img class='icon' width='24' height='24' src='/static/icons/download.svg'></a>";
 
             if (extension(name) == "png" || extension(name) == "jpg" ) {
               getMeta(url, (err, img) => {
