@@ -251,7 +251,7 @@
     $noaa15APT->centerFrequency->set(137620000);
     $noaa15APT->modulation->set($apt);
     $noaa15APT->antenna->set($qfh);
-    $noaa15APT->priority->set(0);
+    $noaa15APT->priority->set(100);
     $noaa15APT->processPipe->set($aptPipe);
     $noaa15APT->commit();
 
