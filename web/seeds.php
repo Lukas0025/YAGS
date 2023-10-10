@@ -137,6 +137,15 @@
 
     $lrptPipe->commit();
 
+    $spectogramPipe = new \DAL\processPipe();
+    $spectogramPipe->name->set("Spectogram");
+    $spectogramPipe->pipe->set([
+        "baseband_spectogram.py {baseband} {artefactDir}/spectogram.png -fs {fs} -fc {freq}",
+        "cp {baseband} {artefactDir}/{freq}_{fs}.s8"
+    ]);
+
+    $spectogramPipe->commit();
+
 
     /**
      * NOAA 19
