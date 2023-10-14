@@ -50,7 +50,11 @@ class recorder(threading.Thread):
 
         realStart = int(datetime.datetime.now(tz=datetime.timezone.utc).timestamp())
 
-        os.system(f"satdump record {baseband} --source {self.job['receiver']['params']['radio']} --samplerate {fs} --frequency {self.job['transmitter']['centerFrequency']} --gain {self.job['receiver']['params']['gain']} --baseband_format s8 --timeout {recordTime}")
+        ret = os.system(f"satdump record {baseband} --source {self.job['receiver']['params']['radio']} --samplerate {fs} --frequency {self.job['transmitter']['centerFrequency']} --gain {self.job['receiver']['params']['gain']} --baseband_format s8 --timeout {recordTime}")
+
+        if ret != 0: # fail to open sdr
+            puller.setFail(self.job["id"])
+            return
 
         realEnd   = int(datetime.datetime.now(tz=datetime.timezone.utc).timestamp())
 

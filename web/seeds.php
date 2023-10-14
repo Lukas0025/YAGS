@@ -146,6 +146,16 @@
 
     $spectogramPipe->commit();
 
+    $cwPipe = new \DAL\processPipe();
+    $cwPipe->name->set("CW Morse");
+    $cwPipe->pipe->set([
+        "baseband_spectogram.py {baseband} {artefactDir}/spectogram.png -fs {fs} -fc {freq}",
+        "cw_morse.py {baseband} {artefactDir}/morse.txt -fs {fs} -fc \"[?]\"",
+        "cp {baseband} {artefactDir}/{freq}_{fs}.s8"
+    ]);
+
+    $cwPipe->commit();
+
 
     /**
      * NOAA 19
@@ -346,7 +356,7 @@
     $maxvalierCW->modulation->set($cw);
     $maxvalierCW->antenna->set($yagi);
     $maxvalierCW->priority->set(0);
-    $maxvalierCW->processPipe->set($spectogramPipe);
+    $maxvalierCW->processPipe->set($cwPipe);
     $maxvalierCW->commit();
 
     // add autoplas
