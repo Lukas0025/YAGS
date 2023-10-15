@@ -1,11 +1,12 @@
 #!/usr/bin/env python
-# Simple CW morse decoder
+# Simple spectogram ploter
 
 import argparse
 import numpy as np
+import matplotlib.pyplot as plt
 
 if __name__ == '__main__':
-    cliParser = argparse.ArgumentParser(description='Simple CW morse decoder')    
+    cliParser = argparse.ArgumentParser(description='Simple spectogram ploter')    
     
     cliParser.add_argument('input_file',  type=str, help='input filename baseband record')
     cliParser.add_argument('output_file', type=str, help='output filename decoded text')
@@ -34,42 +35,65 @@ if __name__ == '__main__':
     failChar      = args.failChar
     
     downSample    = int(sample_rate // down_rate) 
+    sampleSize    = 2
     
-    data = data[1::2] + 1j * data[0::2]
-    data = data[1::downSample] # downsample
-    data = data - np.mean(data) # normalize
+    num_rows      = len(data) // (fft_size * sampleSize * downSample)
+    num_samples   = len(data) // (sampleSize * downSample)
     
-    num_rows      = len(data) // fft_size
-    
-    beep_trashold = []
-
+    DC_PART = 0
     for i in range(num_rows):
-        fft       = np.abs(np.fft.fftshift(np.fft.fft(data[i*fft_size:(i+1)*fft_size])))
-        frame_max = np.max(fft[len(fft)//2 - bandwidth//2 + offset_freq : len(fft)//2 +  bandwidth//2 + offset_freq])
-        beep_trashold.append(frame_max)
+        subdata_start = i * sampleSize * fft_size * downSample
+        subdata = data[subdata_start : subdata_start + fft_size * sampleSize * downSample]
+        
+        subdata = subdata[1::2] + 1j * subdata[0::2] # convert to complex
+        subdata = subdata[0::downSample]             # downsample
+        DC_PART += np.sum(subdata)
 
-    beep_trashold = np.mean(beep_trashold)
+    DC_PART /= num_samples
     
-    beep = np.zeros(num_rows)
-
+    print(f"DC part is {DC_PART}")
+    
+    beep_trashold = 0
+    
     for i in range(num_rows):
-        fft       = np.abs(np.fft.fftshift(np.fft.fft(data[i*fft_size:(i+1)*fft_size])))
+        subdata_start = i * sampleSize * fft_size * downSample
+        subdata = data[subdata_start : subdata_start + fft_size * sampleSize * downSample]
+        
+        subdata = subdata[1::2] + 1j * subdata[0::2] # convert to complex
+        subdata = subdata[0::downSample]             # downsample
+        subdata -= DC_PART
+        
+        fft       = np.abs(np.fft.fftshift(np.fft.fft(subdata)))
         frame_max = np.max(fft[len(fft)//2 - bandwidth//2 + offset_freq : len(fft)//2 +  bandwidth//2 + offset_freq])
-        if (frame_max >= beep_trashold):
-            beep[i] = 1
-            
+        beep_trashold += frame_max
+        
+    beep_trashold /= num_rows
+    
+    print(f"beep trashold is {beep_trashold}")
+
+    
     is_one        = False
     mean_one_len  = []
     mean_zero_len = []
     sig_len       = 0
 
-    for signal in beep:
-        if signal == 1 and not(is_one):
+    for i in range(num_rows):
+        subdata_start = i * sampleSize * fft_size * downSample
+        subdata = data[subdata_start : subdata_start + fft_size * sampleSize * downSample]
+        
+        subdata = subdata[1::2] + 1j * subdata[0::2] # convert to complex
+        subdata = subdata[0::downSample]             # downsample
+        subdata -= DC_PART
+        
+        fft       = np.abs(np.fft.fftshift(np.fft.fft(subdata)))
+        frame_max = np.max(fft[len(fft)//2 - bandwidth//2 + offset_freq : len(fft)//2 +  bandwidth//2 + offset_freq])
+        
+        if (frame_max >= beep_trashold) and not(is_one):
             mean_zero_len.append(sig_len)
             sig_len       = 0
             is_one        = True
-    
-        if signal == 0 and is_one:
+        
+        if (frame_max < beep_trashold) and is_one:
             mean_one_len.append(sig_len)
             sig_len       = 0
             is_one        = False
@@ -82,9 +106,19 @@ if __name__ == '__main__':
     is_one   = False
     morse    = ""
     sig_len  = 0
-
-    for signal in beep:
-        if signal == 1 and not(is_one):
+    
+    for i in range(num_rows):
+        subdata_start = i * sampleSize * fft_size * downSample
+        subdata = data[subdata_start : subdata_start + fft_size * sampleSize * downSample]
+        
+        subdata = subdata[1::2] + 1j * subdata[0::2] # convert to complex
+        subdata = subdata[0::downSample]             # downsample
+        subdata -= DC_PART
+        
+        fft       = np.abs(np.fft.fftshift(np.fft.fft(subdata)))
+        frame_max = np.max(fft[len(fft)//2 - bandwidth//2 + offset_freq : len(fft)//2 +  bandwidth//2 + offset_freq])
+        
+        if (frame_max >= beep_trashold) and not(is_one):
             is_one        = True
             if sig_len >= mean_zero_len * 2:
                 morse += "\n"
@@ -92,15 +126,15 @@ if __name__ == '__main__':
                 morse += " "
 
             sig_len = 0
-
-        if signal == 0 and is_one:
+        
+        if (frame_max < beep_trashold) and is_one:
             is_one        = False
             if sig_len > mean_one_len:
                 morse += "-"
             else:
                 morse += "."
             sig_len = 0
-
+        
         sig_len += 1
 
 

@@ -11,7 +11,7 @@ if __name__ == '__main__':
     cliParser.add_argument('input_file',  type=str, help='input filename')
     cliParser.add_argument('output_file', type=str, help='output filename')
     cliParser.add_argument('-fs', '--sampleRate', type=float, help='sets the sample rate [hz]')    
-    cliParser.add_argument('-fc', '--centralFreq', type=float, help='sets the sample rate [hz]')    
+    cliParser.add_argument('-fc', '--centralFreq', type=float, help='sets center freq of spectrum [hz]')    
     
     cliParser.add_argument('-f', '--format', type=str, 
         help='Output format', 
@@ -30,9 +30,20 @@ if __name__ == '__main__':
     num_rows      = len(data) // fft_size // sampleSize
 
     # ok compute how many data to one row
-    num_rows_real = 100
+    num_rows_real = 1024
     if num_rows < num_rows_real:
         num_rows_real = num_rows
+
+    # find DC part
+    DC_PART = 0
+    for i in range(num_rows):
+        subdata_start = i * sampleSize * fft_size
+        subdata = data[subdata_start : subdata_start + fft_size * sampleSize]
+        
+        subdata = subdata[1::2] + 1j * subdata[0::2] # convert to complex
+        DC_PART += np.sum(subdata)
+
+    DC_PART /= num_rows * fft_size
 
     abstract_rows_per_row = int(num_rows / num_rows_real)
     
@@ -45,6 +56,7 @@ if __name__ == '__main__':
         subdata = data[subdata_start : subdata_start + fft_size * sampleSize]
         
         subdata = subdata[1::2] + 1j * subdata[0::2] # convert to complex
+        sub_fft -= DC_PART                           # remove DC part
         
         cur_fft = 10 * np.log10(np.abs(np.fft.fftshift(np.fft.fft(subdata)))**2)
             
