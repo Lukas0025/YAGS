@@ -37,6 +37,9 @@
         "fail"        => $observationsTable->count("status==? && receiver.station.id == ?", [$ob->status->getVal("fail"), $stationId])
     ];
 
+    $context["transmitters"] = new \wsos\database\core\table(\DAL\transmitter::class);
+    $context["antennas"] = new \wsos\database\core\table(\DAL\antenna::class);
+
     $templates->load("station.html");    
     $templates->render($context);
     $templates->show();

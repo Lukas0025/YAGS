@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+{% INCLUDE layout/head.html %}
+
+<body>
+  <div class="page">
+    {% BINDINCLUDE layout/header.html logined %}
+
+    <div class="page-header d-print-none mt-4">
+      <div class="container-xl">
+        <div class="row g-2 align-items-center">
+          <div class="col">
+            <div class="page-pretitle" id="target-id">
+              {% BIND target.id %}
+            </div>
+            <h2 class="page-title">
+              Target {% BIND target.name %}
+            </h2>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-body">
+      <div class="container-xl">
+        <div class="row row-deck row-cards">
+
+          <div class="col-12">
+            <div class="row row-cards">
+              <div class="col-12">
+                <div class="card">
+                  <div class="card-header">
+                    <h3 class="card-title">Base info</h3>
+                  </div>
+                  <div class="card-body">
+                    <div class="datagrid">
+                      <div class="datagrid-item">
+                        <div class="datagrid-title">Name</div>
+                        <div class="datagrid-content">
+                          {% BIND target.name %}
+                        </div>
+                      </div>
+                      <div class="datagrid-item">
+                        <div class="datagrid-title">Type</div>
+                        <div class="datagrid-content">
+                            {% BIND target.type %}
+                        </div>
+                      </div>
+                      <div class="datagrid-item">
+                        <div class="datagrid-title">Orbit</div>
+                        <div class="datagrid-content">
+                            {% BIND target.orbit %}
+                        </div>
+                      </div>
+                      <div class="datagrid-item">
+                        <div class="datagrid-title">Transmitters count</div>
+                        <div class="datagrid-content">{% BIND target.transmitters %}</div>
+                      </div>
+                      <div class="datagrid-item">
+                        <div class="datagrid-title">Last observation</div>
+                        <div class="datagrid-content">{% BIND target.lastObservation %}</div>
+                      </div>
+                      <div class="datagrid-item">
+                        <div class="datagrid-title">Locators</div>
+                        <div class="datagrid-content">
+
+                          {% FOREACH target.locatorsKey USE '<span class="status" style="font-size: 10px;">(\ BIND item \)</span>' %}
+                        </div>
+                      </div>
+                      <div class="datagrid-item">
+                        <div class="datagrid-title">Success observations</div>
+                        <div class="datagrid-content">{% BIND target.success %}</div>
+                      </div>
+                      <div class="datagrid-item">
+                        <div class="datagrid-title">Fail observations</div>
+                        <div class="datagrid-content">{% BIND target.fail %}</div>
+                      </div>
+                      </div>
+                      <hr>
+                      <div class="col-12">
+                        <div class="datagrid-title">Description</div>
+                        <div class="datagrid-content">{% BIND target.description %}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button type="button" style="display:none" class="btn btn-primary ms-auto" id="transmitterModal" data-bs-toggle="modal" data-bs-target="#newTransmitterModal">
+            </button>
+
+            <div class="col-lg-6">
+              <div class="row row-cards">
+                <div class="col-12">
+                  <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title">Target transmitters</h3>
+                      <button type="button" class="btn btn-primary ms-auto" onclick="openTransmitter=null;" data-bs-toggle="modal" data-bs-target="#newTransmitterModal">
+                        + Add
+                      </button>
+                    </div>
+                    <div class="table-responsive scrollable" style="height: 400px">
+                      <table class="table card-table table-vcenter text-nowrap datatable table-hover">
+                        <thead>
+                          <tr>
+                            <th>Frequency</th>
+                            <th>Bandwidth</th>
+                            <th>Modulation</th>
+                            <th>Data Type</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% FOREACH transmitters RENDER blocks/transmitter-item.html %}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-6">
+              <div class="row row-cards">
+                <div class="col-12">
+                  <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title">Target position</h3>
+                    </div>
+                    <div class="table-responsive scrollable" style="height: 400px">
+                      <table class="table card-table table-vcenter text-nowrap datatable table-hover">
+                        <thead>
+                          <tr>
+                            <th>Driver</th>
+                            <th>Port/Host</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          stationId
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!--div class="col-md-6 col-lg-12">
+              <div class="card">
+                <div class="card-status-start bg-danger"></div>
+                <div class="card-body">
+                  <h3 class="card-title">Target basic info</h3>
+                  <div class="row g-3">
+                    <div class="col-md">
+                      <div class="form-label">Name</div>
+                      <input type="text" class="form-control" value="{% BIND target.name %}" id="traget-name">
+                    </div>
+                  </div>
+                  <div class="row g-3 mt-2">
+                    <div class="col-md">
+                      <div class="form-label">Description</div>
+                      <textarea class="form-control" id="station-description">{% BIND target.description %}</textarea>
+                    </div>
+                  </div>
+                  <h3 class="card-title mt-4">Target locator</h3>
+                  <div class="row g-3">
+                    <div class="col-md">
+                      <div class="form-label">Latitude</div>
+                      <input type="number" class="form-control" id="station-lat" value="{% BIND station.lat %}">
+                    </div>
+                    <div class="col-md">
+                      <div class="form-label">Longitude</div>
+                      <input type="number" class="form-control" id="station-lon" value="{% BIND station.lon %}">
+                    </div>
+                    <div class="col-md">
+                      <div class="form-label">Altitude [m]</div>
+                      <input type="number" class="form-control" id="station-alt" value="{% BIND station.alt %}">
+                    </div>
+                  </div>
+                </div>
+                <div class="card-footer bg-transparent mt-auto">
+                  <div class="btn-list justify-content-end">
+                    <a href="#" class="btn btn-ghost-danger" onclick="deleteTarget('{% BIND target.id %}')">
+                      Delete target
+                    </a>
+                    <a class="btn btn-primary" onclick="updateTarget('{% BIND target.id %}')">
+                      Update target
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div-->
+
+            
+            
+          </div>
+        </div>
+
+        <div class="modal" id="newTransmitterModal" tabindex="-1">
+          <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Transmitter</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <div class="row">
+                  <div class="col-lg-6">
+                    <div class="mb-3">
+                      <label class="form-label">Frequency [hz]</label>
+                      <input type="number" step="1" id="transmitter-freq" placeholder="137100000" class="form-control">
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="mb-3">
+                      <label class="form-label">Bandwidth [hz]</label>
+                      <input type="number" step="1" id="transmitter-band" placeholder="250000" class="form-control">
+                    </div>
+                  </div>
+                  <div class="col-lg-3">
+                    <div class="mb-3">
+                      <label class="form-label">Antenna</label>
+                      <select class="form-select" id="transmitter-antenna">
+                        {% FOREACH antennas USE '<option value="(\ BIND item.id \)">(\ BIND item.name \)</option>' %}
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-lg-3">
+                    <div class="mb-3">
+                      <label class="form-label">Modulation</label>
+                      <select class="form-select" id="transmitter-modulation">
+                        {% FOREACH modulations USE '<option value="(\ BIND item.id \)">(\ BIND item.name \)</option>' %}
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-lg-3">
+                    <div class="mb-3">
+                      <label class="form-label">Data Type</label>
+                      <select class="form-select" id="transmitter-datatype">
+                        {% FOREACH dataTypes USE '<option value="(\ BIND item.id \)">(\ BIND item.name \)</option>' %}
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-lg-3">
+                    <div class="mb-3">
+                      <label class="form-label">Priority [UP]</label>
+                      <input type="number" step="1" id="transmitter-priority" placeholder="0" class="form-control">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-body">
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div class="mb-3">
+                      <label class="form-label">Process pipe</label>
+                      <select class="form-select" id="transmitter-pipe">
+                        {% FOREACH pipes USE '<option value="(\ BIND item.id \)">(\ BIND item.name \)</option>' %}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn me-auto" data-bs-dismiss="modal">Close</button>
+                <button type="button" onclick="save('{% BIND target.id %}')" class="btn btn-primary" data-bs-dismiss="modal">Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- Tabler Core -->
+        <script src="/dist/js/tabler.min.js?1668287865" defer=""></script>
+        <script src="/static/js/target.js" defer=""></script>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

@@ -12,3 +12,17 @@
             "locator"  => $target->locator->get()
         ];
     }
+
+    function add($params) {
+
+        $target  = new \DAL\target();
+        
+        $target->name->set($params["name"]);
+        $target->type->set($params["type"]);
+        $target->orbit->set($params["orbit"]);
+        $target->locator->set($params["locator"]);
+
+        $target->commit();
+
+        return ["id" => $target->id->get()];
+    }

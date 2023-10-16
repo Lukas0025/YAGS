@@ -13,12 +13,13 @@
     $targets = (new \wsos\database\core\table(\DAL\target::class))->getAll();
 
     // create planed template observations
-    $ob = new \DAL\observation();
+    $dummy_ob     = new \DAL\observation();
+    $dummy_target = new \DAL\target(); 
 
     foreach ($targets->values as $target) {
 
-        $last = (new \wsos\database\core\table(\DAL\observation::class))->query("transmitter.target.id == ? && status == ?", [$target->id->get(), $ob->status->getVal("success")], "DESC end", 1);
-        $last = $last->len() > 0 ? "ago " . $last->values[0]->end->strDelta() : "never";
+        $last = (new \wsos\database\core\table(\DAL\observation::class))->query("(transmitter.target.id == ?) && (status == ?)", [$target->id->get(), $dummy_ob->status->getVal("success")], "DESC end", 1);
+        $last = $last->len() > 0 ? $last->values[0]->end->strDelta() . " ago" : "never";
 
         $observations = (new \wsos\database\core\table(\DAL\observation::class))->count("transmitter.target.id == ?", [$target->id->get()]);
 
@@ -32,7 +33,9 @@
         ]);
     }
 
-    $context["targets"] = $context["targets"]->values;
+    $context["targets"]     = $context["targets"]->values;
+    $context["types"]       = new \wsos\database\core\table(\DAL\targetType::class);
+    $context["orbit_types"] = $dummy_target->orbit->getOptions()->values;
 
 
     $templates->load("targets.html");    

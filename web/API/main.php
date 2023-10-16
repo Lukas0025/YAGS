@@ -13,7 +13,10 @@
     //register API functions
     include_once(__DIR__ . "/observations.php");
     include_once(__DIR__ . "/stations.php");
+    include_once(__DIR__ . "/targets.php");
     include_once(__DIR__ . "/crons.php");
+    include_once(__DIR__ . "/transmitters.php");
+    include_once(__DIR__ . "/receivers.php");
 
     //init API
     $api->serve($router->getArgs());

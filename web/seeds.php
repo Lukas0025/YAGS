@@ -24,9 +24,9 @@
     $msumrType->name->set("MSU-MR");
     $msumrType->commit();
 
-    $telemetryType = new \DAL\dataType();
-    $telemetryType->name->set("Telemetry");
-    $telemetryType->commit();
+    $beaconType = new \DAL\dataType();
+    $beaconType->name->set("Beacon");
+    $beaconType->commit();
 
     /**
      * Antennas seeds
@@ -350,7 +350,7 @@
 
     $maxvalierCW = new \DAL\transmitter();
     $maxvalierCW->target->set($maxvalier);
-    $maxvalierCW->dataType->set($telemetryType);
+    $maxvalierCW->dataType->set($beaconType);
     $maxvalierCW->bandwidth->set(120000);
     $maxvalierCW->centerFrequency->set(145960000);
     $maxvalierCW->modulation->set($cw);

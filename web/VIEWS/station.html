@@ -88,12 +88,18 @@
               </div>
             </div>
 
+            <button type="button" style="display: none;" class="btn btn-primary ms-auto" data-bs-toggle="modal" id="receiverModal" data-bs-target="#newReceiverModal">
+            </button>
+
             <div class="col-lg-6">
               <div class="row row-cards">
                 <div class="col-12">
                   <div class="card">
                     <div class="card-header">
                       <h3 class="card-title">Station receivers</h3>
+                      <button type="button" class="btn btn-primary ms-auto" onclick="openReceiver=null;" data-bs-toggle="modal" data-bs-target="#newReceiverModal">
+                        + Add
+                      </button>
                     </div>
                     <div class="table-responsive scrollable" style="height: 400px">
                       <table class="table card-table table-vcenter text-nowrap datatable table-hover">
@@ -101,8 +107,8 @@
                           <tr>
                             <th>Frequency</th>
                             <th>Bandwidth</th>
+                            <th>Antenna</th>
                             <th>Gain</th>
-                            <th>Actions</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -121,6 +127,9 @@
                   <div class="card">
                     <div class="card-header">
                       <h3 class="card-title">Station rotators</h3>
+                      <button type="button" class="btn btn-primary ms-auto" onclick="openRotator=null;" data-bs-toggle="modal" data-bs-target="#newRotatorModal">
+                        + Add
+                      </button>
                     </div>
                     <div class="table-responsive scrollable" style="height: 400px">
                       <table class="table card-table table-vcenter text-nowrap datatable table-hover">
@@ -190,6 +199,157 @@
                     <a class="btn btn-primary" onclick="updateStation('{% BIND station.id %}')">
                       Update station
                     </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="modal" id="newReceiverModal" tabindex="-1">
+              <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">Receiver</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="row">
+                      <div class="col-lg-6">
+                        <div class="mb-3">
+                          <label class="form-label">Center frequency [hz]</label>
+                          <input type="number" step="1" id="receiver-freq" placeholder="137100000" class="form-control">
+                        </div>
+                      </div>
+                      <div class="col-lg-6">
+                        <div class="mb-3">
+                          <label class="form-label">Bandwidth [hz]</label>
+                          <input type="number" step="1" id="receiver-band" placeholder="250000" class="form-control">
+                        </div>
+                      </div>
+                      <div class="col-lg-9">
+                        <div class="mb-3">
+                          <label class="form-label">Antenna</label>
+                          <select class="form-select" id="receiver-antenna">
+                            {% FOREACH antennas USE '<option value="(\ BIND item.id \)">(\ BIND item.name \)</option>' %}
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-lg-3">
+                        <div class="mb-3">
+                          <label class="form-label">Gain [dB]</label>
+                          <input type="number" step="1" id="receiver-gain" placeholder="0" class="form-control">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-body">
+                    <div class="row">
+                      <div class="col-lg-12">
+                        <div class="mb-3">
+                          <label class="form-label">Auto plan targets</label>
+                          <select class="form-select" id="select-transmitter" onchange="addAutoPlan()">
+                            <option default value=""></option>
+                            {% FOREACH transmitters USE '<option value="(\ BIND item.id \)">
+                              (\ BIND item.target.name \) -
+                              (\ BIND item.modulation.name \) -
+                              (\ BIND item.dataType.name \) @
+                              (\ BIND item.centerFrequency \)Hz
+                            </option>' %}
+                          </select>
+                          
+
+                          <div id="receiver-auto-plan" class="mt-2">
+
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-body">
+                    <div class="row">
+                      <div class="col-lg-12">
+                        <div class="mb-3">
+                          <label class="form-label">Receiver params [JSON]</label>
+                          <textarea class="form-select" id="receiver-params" ></textarea>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn me-auto" data-bs-dismiss="modal">Close</button>
+                    <button type="button" onclick="saveReceiver('{% BIND station.id %}')" class="btn btn-primary" data-bs-dismiss="modal">Save</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="modal" id="newRotatorModal" tabindex="-1">
+              <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">Rotator</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="row">
+                      <div class="col-lg-6">
+                        <div class="mb-3">
+                          <label class="form-label">Frequency [hz]</label>
+                          <input type="number" step="1" id="transmitter-freq" placeholder="137100000" class="form-control">
+                        </div>
+                      </div>
+                      <div class="col-lg-6">
+                        <div class="mb-3">
+                          <label class="form-label">Bandwidth [hz]</label>
+                          <input type="number" step="1" id="transmitter-band" placeholder="250000" class="form-control">
+                        </div>
+                      </div>
+                      <div class="col-lg-3">
+                        <div class="mb-3">
+                          <label class="form-label">Antenna</label>
+                          <select class="form-select" id="transmitter-antenna">
+                            
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-lg-3">
+                        <div class="mb-3">
+                          <label class="form-label">Modulation</label>
+                          <select class="form-select" id="transmitter-modulation">
+                            
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-lg-3">
+                        <div class="mb-3">
+                          <label class="form-label">Data Type</label>
+                          <select class="form-select" id="transmitter-datatype">
+                            
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-lg-3">
+                        <div class="mb-3">
+                          <label class="form-label">Priority [UP]</label>
+                          <input type="number" step="1" id="transmitter-priority" placeholder="0" class="form-control">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-body">
+                    <div class="row">
+                      <div class="col-lg-12">
+                        <div class="mb-3">
+                          <label class="form-label">Process pipe</label>
+                          <select class="form-select" id="transmitter-pipe">
+                            
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn me-auto" data-bs-dismiss="modal">Close</button>
+                    <button type="button" onclick="save('{% BIND target.id %}')" class="btn btn-primary" data-bs-dismiss="modal">Save</button>
                   </div>
                 </div>
               </div>
