@@ -20,7 +20,7 @@
         $target->name->set($params["name"]);
         $target->type->set($params["type"]);
         $target->orbit->set($params["orbit"]);
-        $target->locator->set($params["locator"]);
+        $target->locator->set(json_decode($params["locator"]));
 
         $target->commit();
 
