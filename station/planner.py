@@ -5,13 +5,15 @@ from operator import itemgetter
 
 import puller
 
+from loguru import logger
+
 def plan(lat, lon, alt, tle, transmitter, receiver, priority, name, delta = timedelta(seconds=1800), predictH = 12, horizon = 5):
     #prevent plan same obsevation
     last = datetime.utcnow()
     plans = []
 
     for ob in puller.watingJobs:
-        last = max(ob["start"], last)
+        last = max(ob["end"], last)
 
     orb = Orbital(name, line1=tle["line1"], line2=tle["line2"])
 
@@ -30,7 +32,7 @@ def plan(lat, lon, alt, tle, transmitter, receiver, priority, name, delta = time
         end   = ob[1]
 
         if start <= (last + timedelta(seconds=60)): # must be minute after last
-            print(f"[INFO] alredy planed {name} at {start}")
+            #logger.debug(f"alredy planed {name} at {start} skiping")
             continue
 
         plans.append({
@@ -40,6 +42,8 @@ def plan(lat, lon, alt, tle, transmitter, receiver, priority, name, delta = time
             "end":         end,
             "priority":    priority
         })
+
+        logger.debug(f"planed {name} at {start}")
 
     return plans
 

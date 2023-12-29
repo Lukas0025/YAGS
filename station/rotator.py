@@ -20,7 +20,7 @@ class rotator(threading.Thread):
         #init pyorbytal
         orb = Orbital(self.job["target"]["name"], line1=self.job["target"]["locator"]["tle"]["line1"], line2=self.job["target"]["locator"]["tle"]["line2"])
 
-        while (True):
+        while (not self.killed):
             az, el = orb.get_observer_look(
                 utc_time=datetime.utcnow() + timedelta(seconds=5),
                 lon=self.station["lon"],
@@ -32,16 +32,8 @@ class rotator(threading.Thread):
             print(f"[INFO] rotator az: {az}, el: {el}")
 
             self.driver.set_azel(az, el)
-
-            if (self.killed):
-                break
             
             time.sleep(10)
-
-        # home the rotator on end
-        self.driver.reset()
-
-        time.sleep(60)
 
             
     

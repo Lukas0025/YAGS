@@ -4,8 +4,8 @@ from urllib.request import urlopen
 import requests
 import json
 import os
-
 import pathlib
+from loguru import logger
 
 watingJobs = []
 location   = {}
@@ -26,7 +26,15 @@ def getPlaneble():
     return data_json
 
 def apiSend(url, data, files=None):
-    r = requests.post(url=config.masterUrl + url, data=data, files=files)
+    try:
+        r = requests.post(url=config.masterUrl + url, data=data, files=files, timeout=10)
+    except requests.Timeout:
+        logger.error("Api send fail timeout {}".format(config.masterUrl + url))
+        return None
+    except requests.ConnectionError:
+        logger.error("Api send fail connection error {}".format(config.masterUrl + url))
+        return None
+
     return r.text
 
 def plan(transmitter, receiver, start, end):
@@ -55,20 +63,45 @@ def setDecoding(observation):
 def setSuccess(observation):
     apiSend("/api/observation/success", {"id": observation})
 
-def setArtefacts(adir, observation):
-    ufiles = {} # open('file.txt','rb')
+def read_in_chunks(file_object, chunk_size=5000000):
+    while True:
+        data = file_object.read(chunk_size)
+        if not data:
+            break
+        yield data
 
-    print("Uploading artefacts")
+def setArtefacts(adir, observation):
+    logger.debug("Uploading artefacts")
 
     for path, subdirs, files in os.walk(adir):
         for name in files:
             afile           = os.path.join(path, name)
             fileName        = str(afile).replace(str(adir), "").replace("/", "\\")
-            print(fileName)
-            ufiles[fileName] = open(afile, 'rb')
+            aPath           = str(path).replace(str(adir), "").replace("/", "\\")
+            ufile           = open(afile, 'rb')
+
+            index = 0
+            offset = 0
+
+            for chunk in read_in_chunks(ufile):
+                offset = index + len(chunk)
+
+                logger.debug(f"Sending file {fileName} chunk with offset {index}")
+                if apiSend("/api/observation/addArtefacts", {
+                    "id":     observation,
+                    "fname":  name,
+                    "path":   aPath,
+                    "offset": index,
+                    "data":   chunk
+                }) is None:
+                    logger.error(f"Sending file {fileName} fail in chunk with offset {index}")
+                    break
 
 
-    apiSend("/api/observation/addArtefacts", {"id": observation}, ufiles)
+                index = offset
+
+
+    return True
     
 
 def parseNewJobs(jobs):

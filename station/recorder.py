@@ -8,6 +8,8 @@ import config
 import time
 import datetime
 
+from loguru import logger
+
 # A recursive function to remove the folder
 def del_folder(path):
     for sub in path.iterdir():
@@ -22,13 +24,14 @@ def del_folder(path):
     path.rmdir()
 
 class recorder(threading.Thread):
-    def __init__(self, job, location):
+    def __init__(self, job, location, lock):
         threading.Thread.__init__(self)
         self.job = job
         self.location = location
+        self.lock = lock
  
     def run(self):
-        print(f"Recorder for job {self.job['target']['name']} started")
+        logger.debug(f"Recorder for job {self.job['target']['name']} started")
 
         recordTime = (self.job["end"] - self.job["start"]).total_seconds()
 
@@ -52,6 +55,11 @@ class recorder(threading.Thread):
 
         ret = os.system(f"satdump record {baseband} --source {self.job['receiver']['params']['radio']} --samplerate {fs} --frequency {self.job['transmitter']['centerFrequency']} --gain {self.job['receiver']['params']['gain']} --baseband_format s8 --timeout {recordTime}")
 
+        rotatorCTR.kill()
+        self.lock.release()
+
+        logger.debug("Release lock")
+
         if ret != 0: # fail to open sdr
             puller.setFail(self.job["id"])
             return
@@ -61,11 +69,6 @@ class recorder(threading.Thread):
         print(f"Recorder for job {self.job['target']['name']} stoped")
 
         puller.setRecorded(self.job["id"])
-        rotatorCTR.kill()
-
-        if self.job["proccessPipe"] == []:
-            return
-
         puller.setDecoding(self.job["id"])
 
         #create artecats dir
@@ -88,11 +91,17 @@ class recorder(threading.Thread):
             for k, v in replacements.items():
                 pipe = pipe.replace(k, v)
 
-            os.system(pipe)
+            ret = os.system(pipe)
+
+            if ret != 0:
+                logger.error("Process pipe {} fail".format(pipe))
 
         puller.setSuccess(self.job["id"])
 
-        puller.setArtefacts(adir, self.job["id"])
+        logger.debug("Starting upload of artifacts")
+
+        if not puller.setArtefacts(adir, self.job["id"]):
+            puller.setFail(self.job["id"])
 
         # remove basband record
         os.remove(str(baseband) + ".s8")
@@ -101,8 +110,8 @@ class recorder(threading.Thread):
         path = Path(adir)
         try:
             del_folder(path)
-            print("Directory removed successfully")
+            logger.debug("Directory with artifacts removed successfully")
         except OSError as o:
-            print(f"Error, {o.strerror}: {path}")
+            logger.debug(f"Error, {o.strerror}: {path}")
 
-
+        logger.debug("Recored done")
