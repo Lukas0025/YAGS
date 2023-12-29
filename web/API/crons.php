@@ -43,9 +43,9 @@
         $observations = new \wsos\database\core\table(\DAL\observation::class);
         $ob           = new \DAL\observation();
 
-        $faild = $observations->query("status==? && start<?", [$ob->status->getVal("assigned"), time() - 300]);
+        $faild = $observations->query("(status == ?) && (start < ?)", [$ob->status->getVal("assigned"), time() - 300]);
 
-        foreach ($fob in $faild->values) {
+        foreach ($faild->values as $fob) {
             $fob->status->set("fail");
             $fob->commit(); 
         }
