@@ -2,7 +2,8 @@
     namespace API\cron;
 
     function all($params) {
-
+        tle($params);
+        autoFail($params);
     }
 
     function tle($params) {
@@ -36,4 +37,17 @@
         }
 
         return $updated;
+    }
+
+    function autoFail($params) {
+        $observations = new \wsos\database\core\table(\DAL\observation::class);
+        $ob           = new \DAL\observation();
+
+        $faild = $observations->query("status==? && start<?", [$ob->status->getVal("assigned"), time() - 300]);
+
+        foreach ($fob in $faild->values) {
+            $fob->status->set("fail");
+            $fob->commit(); 
+        }
+
     }
