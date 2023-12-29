@@ -1,2 +1,4 @@
 web/DB
 web/ARTEFACTS
+station/__pycache__
+station/nohup.out
