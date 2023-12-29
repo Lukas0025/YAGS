@@ -132,14 +132,26 @@
 
         $adir = __DIR__ . "/../ARTEFACTS/" . $params["id"];
 
+        $fname = basename($params["fname"]);
+
         mkdir($adir, 0777, true);
-        
-        $artefacts = $obs->artefacts->get();
-        foreach ($_FILES as $file) {
-            move_uploaded_file($file["tmp_name"], $adir . "/" . $file["name"]);
-            $artefacts[] = "/ARTEFACTS/{$params['id']}/{$file['name']}";
+
+        // chunk upload file
+        if ($params["offset"] == 0) {
+            // get current artifasts
+            $artefacts = $obs->artefacts->get();
+
+            $artefacts[] = "/ARTEFACTS/{$params['id']}/{$fname}";
+
+            $obs->artefacts->set($artefacts);
+            $obs->commit();
         }
 
-        $obs->artefacts->set($artefacts);
-        $obs->commit();
+        // file pointer
+        $ifp = fopen($adir . "/" . $fname, 'ab'); 
+
+        fwrite($ifp, $params["data"]);
+    
+        // clean up the file resource
+        fclose($ifp); 
     }
