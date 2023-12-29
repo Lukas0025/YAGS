@@ -1,0 +1,13 @@
+[Unit]
+Description=YAGS ground station client
+After=syslog.target network.target
+
+[Service]
+WorkingDirectory=/YAGS/
+ExecStart=/usr/bin/python3 main.py 
+
+Restart=always
+RestartSec=120
+
+[Install]
+WantedBy=multi-user.target

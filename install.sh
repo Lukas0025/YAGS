@@ -38,7 +38,7 @@ git clone https://github.com/Hamlib/Hamlib
 cd Hamlib
 
 ./bootstrap
-./configure
+./configure --prefix=/usr/local --enable-static
 make
 make install
 
