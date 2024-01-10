@@ -63,7 +63,11 @@ def setDecoding(observation):
 def setSuccess(observation):
     apiSend("/api/observation/success", {"id": observation})
 
-def read_in_chunks(file_object, chunk_size=5000000):
+def read_in_chunks(file_object, chunk_size=None):
+
+    if chunk_size is None:
+        chunk_size = config.MaxUploadChunk
+
     while True:
         data = file_object.read(chunk_size)
         if not data:

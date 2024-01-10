@@ -29,6 +29,8 @@ if __name__ == '__main__':
     Fc            = args.centralFreq
     num_rows      = len(data) // fft_size // sampleSize
 
+    num_samples   = len(data) // sampleSize
+
     # ok compute how many data to one row
     num_rows_real = 1024
     if num_rows < num_rows_real:
@@ -43,7 +45,9 @@ if __name__ == '__main__':
         subdata = subdata[1::2] + 1j * subdata[0::2] # convert to complex
         DC_PART += np.sum(subdata)
 
-    DC_PART /= num_rows * fft_size
+    DC_PART /= num_samples
+
+    print(f"DC part is {DC_PART}")
 
     abstract_rows_per_row = int(num_rows / num_rows_real)
     

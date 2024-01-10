@@ -3,6 +3,8 @@ from pyorbital.orbital import Orbital
 from datetime import datetime, timedelta
 import time
 
+from loguru import logger
+
 class rotator(threading.Thread):
     def __init__(self, driver, job, station):
         threading.Thread.__init__(self)
@@ -12,7 +14,7 @@ class rotator(threading.Thread):
         self.killed = False
  
     def run(self):
-        print("[INFO] Starting rotator service")
+        logger.debug("Starting rotator service")
 
         self.driver.reset()
         time.sleep(30)
@@ -29,7 +31,7 @@ class rotator(threading.Thread):
             )
             az, el = round(az), round(el)
             
-            print(f"[INFO] rotator az: {az}, el: {el}")
+            logger.debug(f"rotator for {self.job} az: {az}, el: {el}")
 
             self.driver.set_azel(az, el)
             

@@ -1,3 +1,5 @@
+sudo systemctl stop yags
+
 apt update
 apt upgrade -y
 
@@ -14,7 +16,7 @@ git clone https://github.com/nanomsg/nng.git
 cd nng
 mkdir build && cd build
 cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=/usr ..
-make -j4
+make
 make install
 cd ../..
 rm -rf nng
@@ -24,7 +26,7 @@ git clone https://github.com/altillimity/satdump.git
 cd satdump
 mkdir build && cd build
 cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_GUI=OFF -DCMAKE_INSTALL_PREFIX=/usr ..
-make -j`nproc`
+make
 
 make install
 
@@ -63,3 +65,14 @@ ldconfig
 
 cd ../..
 rm -rf SDRPlusPlus
+
+## install YAGS client
+cd station
+
+sudo make install
+
+#sudo chmod -R 777 /YAGS/records/
+#sudo chmod -R 777 /YAGS/artefacts/
+
+sudo systemctl enable yags
+sudo systemctl start yags

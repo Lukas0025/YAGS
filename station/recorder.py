@@ -98,6 +98,15 @@ class recorder(threading.Thread):
 
         puller.setSuccess(self.job["id"])
 
+        # compress artifacts
+        if config.compress:
+            logger.debug("Compressing artifacts")
+
+            os.system("find " + adir + " -name '*.png' -exec mogrify -format jpg -quality " + str(config.compressJpgQ) + " {} +")
+            os.system(f"rm -f {adir}/*.png")
+            os.system(f"tar -czvf {adir}/baseband.tar.gz {adir}/*.s8")
+            os.system(f"rm -f {adir}/*.s8")
+
         logger.debug("Starting upload of artifacts")
 
         if not puller.setArtefacts(adir, self.job["id"]):
