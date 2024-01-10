@@ -1,4 +1,11 @@
-sudo systemctl stop yags
+#!/bin/bash
+
+if [ "$EUID" -ne 0 ]
+  then echo "Please run as root"
+  exit
+fi
+
+systemctl stop yags
 
 apt update
 apt upgrade -y
@@ -69,10 +76,10 @@ rm -rf SDRPlusPlus
 ## install YAGS client
 cd station
 
-sudo make install
+make install
 
-#sudo chmod -R 777 /YAGS/records/
-#sudo chmod -R 777 /YAGS/artefacts/
+#chmod -R 777 /YAGS/records/
+#chmod -R 777 /YAGS/artefacts/
 
-sudo systemctl enable yags
-sudo systemctl start yags
+systemctl enable yags
+systemctl start yags
