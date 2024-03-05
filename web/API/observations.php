@@ -126,9 +126,6 @@
     }
 
     function addArtefacts($params) {
-        $obs = new \DAL\observation();
-        $obs->id->set($params["id"]);
-        $obs->fetch();
 
         $adir = __DIR__ . "/../ARTEFACTS/" . $params["id"];
 
@@ -136,22 +133,27 @@
 
         mkdir($adir, 0777, true);
 
-        // chunk upload file
-        if ($params["offset"] == 0) {
-            // get current artifasts
-            $artefacts = $obs->artefacts->get();
-
-            $artefacts[] = "/ARTEFACTS/{$params['id']}/{$fname}";
-
-            $obs->artefacts->set($artefacts);
-            $obs->commit();
-        }
-
         // file pointer
         $ifp = fopen($adir . "/" . $fname, 'ab'); 
 
         fwrite($ifp, $params["data"]);
-    
+            
         // clean up the file resource
         fclose($ifp); 
+
+        // chunk upload file
+        if ($params["offset"] != 0) return;
+
+        $obs = new \DAL\observation();
+        $obs->id->set($params["id"]);
+        $obs->fetch();
+
+        //get current artefacts
+        $artefacts = $obs->artefacts->get();
+
+        $artefacts[] = "/ARTEFACTS/{$params['id']}/{$fname}";
+
+        //done artefact save
+        $obs->artefacts->set($artefacts);
+        $obs->commit();
     }
