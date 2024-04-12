@@ -185,7 +185,7 @@
                       <div class="col-12 col-md-9 d-flex flex-column">
                         <div class="card-body">
                           <h2 class="mb-4" id="artefact-title"></h2>
-                          <div id="artefact-body" class="row align-items-center scrollable" style="height: 35rem">
+                          <div id="artefact-body" class="row align-items-center scrollable" style="height: 35rem; display: block;">
                             <div class="empty">
                               <div class="empty-img"><img src="/static/icons/undraw_printing_invoices_5r4r.svg" height="128" alt="">
                               </div>
@@ -208,6 +208,7 @@
 
         <!-- Tabler Core -->
         <script src="/dist/js/tabler.min.js?1668287865" defer=""></script>
+        <script src="/dist/js/simple-json-viewer.min.js"></script>
         <script>
           function extension(val) {
             var parts = val.split(".");
@@ -243,7 +244,22 @@
               request.send();
               request.onreadystatechange = function () {
                 if (request.readyState === 4 && request.status === 200) {
-                  document.getElementById("artefact-body") .innerHTML = "<pre>" + request.responseText + "</pre>";
+                  if (extension(name) == "txt") {
+                    document.getElementById("artefact-body").innerHTML = "<pre>" + request.responseText + "</pre>";
+                  } else {// it is json
+                    var container = document.getElementById("artefact-body");
+
+                    container.innerHTML = "";
+
+                    var json = request.responseText;
+
+                    var options = {
+                      fontFamily: '"Fira Mono", monospace',
+                      colors: ['gray', '#090', '#c00', 'purple', '#00c', '#ccc', '#333', 'yellow', 'rgb(240,240,240)']
+                    };
+
+                    var viewer = createJSONViewer(container, json, options);
+                  }
                 }
               }
             } else {

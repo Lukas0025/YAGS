@@ -72,60 +72,101 @@
     }
 
     function fail($params) {
+		if (is_null($params["id"])) {
+			return ["status" => "observation ID is not set"];
+		}
+		
         $obs = new \DAL\observation();
         $obs->id->set($params["id"]);
         $obs->fetch();
 
         $obs->status->set("fail");
         $obs->commit();
+        
+        return ["status" => true];
     }
 
     function assigned($params) {
+		if (is_null($params["id"])) {
+			return ["status" => "observation ID is not set"];
+		}
+		
         $obs = new \DAL\observation();
         $obs->id->set($params["id"]);
         $obs->fetch();
 
         $obs->status->set("assigned");
         $obs->commit();
+        
+        return ["status" => true];
     }
 
     function recording($params) {
+		if (is_null($params["id"])) {
+			return ["status" => "observation ID is not set"];
+		}
+		
         $obs = new \DAL\observation();
         $obs->id->set($params["id"]);
         $obs->fetch();
 
         $obs->status->set("recording");
         $obs->commit();
+        
+        return ["status" => true];
     }
 
     function recorded($params) {
+		if (is_null($params["id"])) {
+			return ["status" => "observation ID is not set"];
+		}
+		
         $obs = new \DAL\observation();
         $obs->id->set($params["id"]);
         $obs->fetch();
 
         $obs->status->set("recorded");
         $obs->commit();
+        
+        
+        return ["status" => true];
     }
 
     function decoding($params) {
+		if (is_null($params["id"])) {
+			return ["status" => "observation ID is not set"];
+		}
+		
         $obs = new \DAL\observation();
         $obs->id->set($params["id"]);
         $obs->fetch();
 
         $obs->status->set("decoding");
         $obs->commit();
+        
+        return ["status" => true];
     }
 
     function success($params) {
+		if (is_null($params["id"])) {
+			return ["status" => "observation ID is not set"];
+		}
+		
         $obs = new \DAL\observation();
         $obs->id->set($params["id"]);
         $obs->fetch();
 
         $obs->status->set("success");
         $obs->commit();
+        
+        return ["status" => true];
     }
 
     function addArtefacts($params) {
+		
+		if (is_null($params["fname"]) || is_null($params["id"])) {
+			return ["status" => "file name or observation ID is not set"];
+		}
 
         $adir = __DIR__ . "/../ARTEFACTS/" . $params["id"];
 
@@ -156,4 +197,6 @@
         //done artefact save
         $obs->artefacts->set($artefacts);
         $obs->commit();
+        
+        return ["status" => true];
     }

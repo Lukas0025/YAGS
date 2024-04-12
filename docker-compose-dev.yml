@@ -4,6 +4,6 @@ services:
     image: yags-web
     build: ./web
     ports:
-      - 8080:80
+      - 3939:80
     volumes:
       - ./web:/var/www/html/

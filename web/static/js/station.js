@@ -27,6 +27,11 @@ function updateStation(id) {
     xhttp.send(station);
 }
 
+function rmAutoPlan(id) {
+    var ele = document.getElementsByName(id);
+    ele[0].remove();
+}
+
 function addAutoPlan() {
     var sel = document.getElementById("select-transmitter");
 
@@ -36,7 +41,7 @@ function addAutoPlan() {
     var text = sel.options[sel.selectedIndex].text;
 
     document.getElementById("receiver-auto-plan").innerHTML += 
-        '<span name="' + sel.value + '" class="status ms-2 mt-2" style="font-size: 10px;">' + text + '</span>';
+        '<span name="' + sel.value + '" class="status ms-2 mt-2" style="font-size: 10px;">' + text + ' <button type="button" class="btn btn-danger btn-sm" aria-label="del" onclick=\'rmAutoPlan("' + sel.value  + '")\'>X</button></span>';
 }
 
 function getAutoPlaned() {
@@ -75,7 +80,7 @@ function loadReceiver(id) {
                          data.autoPlan.values[i].target + " - " +
                          data.autoPlan.values[i].modulation + " - " +
                          data.autoPlan.values[i].dataType + " @ " + 
-                         data.autoPlan.values[i].freq + 'Hz</span>';
+                         data.autoPlan.values[i].freq + 'Hz <button type="button" class="btn btn-danger btn-sm" aria-label="del" onclick=\'rmAutoPlan("' + data.autoPlan.values[i].id + '")\'>X</button></span>';
             }
 
             document.getElementById("receiver-auto-plan").innerHTML = block;

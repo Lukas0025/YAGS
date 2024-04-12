@@ -1,4 +1,4 @@
-<tr onclick="location.href = '/observation/{% BIND item.id %}'">
+<tr onclick="location.href = '/observation/{% BIND item.id %}'" style="{% IF item.id==observation.id USE background-color:antiquewhite %}">
     <td>{% BIND item.transmitter.modulation.name %}</td>
     <td>
       <span class="badge 

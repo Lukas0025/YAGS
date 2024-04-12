@@ -28,6 +28,10 @@
     $beaconType->name->set("Beacon");
     $beaconType->commit();
 
+    $telemetryType = new \DAL\dataType();
+    $telemetryType->name->set("Telemetry");
+    $telemetryType->commit();
+
     /**
      * Antennas seeds
      */
@@ -43,6 +47,10 @@
     $qfh = new \DAL\Antenna();
     $qfh->name->set("QFH");
     $qfh->commit();
+
+    $dipole = new \DAL\Antenna();
+    $dipole->name->set("Dipole");
+    $dipole->commit();
 
 
     /**
@@ -65,18 +73,21 @@
         "radio" => "rtlsdr",
         "gain"  => 45,
         "agc"   => false,
+        "bias"  => false,
         "fs"    => [250000, 1024000, 1536000, 1792000, 1920000, 2048000, 2160000, 2400000, 2560000, 2880000, 3200000]
     ]);
     $myStation137->antenna->set($yagi);
-    $myStation137->centerFrequency->set(137500000);
+    $myStation137->centerFrequency->set(433500000);
     $myStation137->gain->set(45);
     $myStation137->commit();
 
+    /*
     $myStation2G = new \DAL\receiver();
     $myStation2G->station->set($myStation);
     $myStation2G->params->set([
         "radio"    => "hackrf",
         "amp"      => true,
+        "bias"     => false,
         "lna_gain" => 45,
         "vga_gain" => 10,
         "bias"     => true
@@ -85,6 +96,7 @@
     $myStation2G->centerFrequency->set(1700000000);
     $myStation2G->gain->set(45);
     $myStation2G->commit();
+    */
 
     /**
      * Modulations
@@ -122,7 +134,7 @@
     $aptPipe->pipe->set([
         "satdump noaa_apt baseband {baseband} {artefactDir} --samplerate {fs} --satellite_number {targetNum} --start_timestamp {start} --autocrop_wedges --baseband_format s8",
         "baseband_spectogram.py {baseband} {artefactDir}/spectogram.png -fs {fs} -fc {freq}",
-        "cp {baseband} {artefactDir}/{freq}_{fs}.s8"
+        "cp {baseband} {artefactDir}/{dtstart}_{fs}SPS_{freq}Hz.s8"
     ]);
 
     $aptPipe->commit();
@@ -132,7 +144,7 @@
     $lrptPipe->pipe->set([
         "satdump meteor_m2-x_lrpt baseband {baseband} {artefactDir} --samplerate {fs} --baseband_format s8",
         "baseband_spectogram.py {baseband} {artefactDir}/spectogram.png -fs {fs} -fc {freq}",
-        "cp {baseband} {artefactDir}/{freq}_{fs}.s8"
+        "cp {baseband} {artefactDir}/{dtstart}_{fs}SPS_{freq}Hz.s8"
     ]);
 
     $lrptPipe->commit();
@@ -141,7 +153,7 @@
     $spectogramPipe->name->set("Spectogram");
     $spectogramPipe->pipe->set([
         "baseband_spectogram.py {baseband} {artefactDir}/spectogram.png -fs {fs} -fc {freq}",
-        "cp {baseband} {artefactDir}/{freq}_{fs}.s8"
+        "cp {baseband} {artefactDir}/{dtstart}_{fs}SPS_{freq}Hz.s8",
     ]);
 
     $spectogramPipe->commit();
@@ -151,10 +163,23 @@
     $cwPipe->pipe->set([
         "baseband_spectogram.py {baseband} {artefactDir}/spectogram.png -fs {fs} -fc {freq}",
         "cw_morse.py {baseband} {artefactDir}/morse.txt -fs {fs} -fc \"[?]\"",
-        "cp {baseband} {artefactDir}/{freq}_{fs}.s8"
+        "cp {baseband} {artefactDir}/{dtstart}_{fs}SPS_{freq}Hz.s8"
     ]);
 
     $cwPipe->commit();
+
+    $luckyPipe = new \DAL\processPipe();
+    $luckyPipe->name->set("Lucky7-UHF");
+    $luckyPipe->pipe->set([
+	    "satdump lucky7_link baseband {baseband} {artefactDir} --samplerate {fs} --dc_block --start_timestamp {start} --enable_doppler --baseband_format s8",
+        "baseband_spectogram.py {baseband} {artefactDir}/spectogram.png -fs {fs} -fc {freq}",
+        "/decoders/lucky7 {artefactDir}/lucky7_link.frm {start} > {artefactDir}/telemetry.json",
+        "cp {baseband} {artefactDir}/{dtstart}_{fs}SPS_{freq}Hz.s8",
+        "test -f {artefactDir}/lucky7_link.frm"
+    ]);
+
+    $luckyPipe->commit();
+
 
 
     /**
@@ -359,13 +384,26 @@
     $maxvalierCW->processPipe->set($cwPipe);
     $maxvalierCW->commit();
 
-    // add autoplas
-    $myStation137->autoPlan->set([
-        $noaa15APT->id->get(),
-        $noaa18APT->id->get(),
-        $noaa19APT->id->get(),
-        $meteor23LRPT1->id->get(),
-        $maxvalierCW->id->get()
+    $lucky7 = new \DAL\target();
+    $lucky7->name->set("Lucky 7");
+    $lucky7->type->set($nanosatelliteType);
+    $lucky7->orbit->set("sso");
+    $lucky7->description->set("It is a single unit CubeSat with a size of 112×112×113.5 mm, to be easily traceable in space, available by launch cost and compatible with a variety of launch opportunities. Its aim is to test everyday electronics tweaked for deep space or long-lasting missions such as to the Moon, Mars, and beyond. As their lucky number is seven and it is supposed to be the seventh Czech made satellite in a row, they called it simply Lucky-7.");
+    $lucky7->locator->set([
+        "tle" => [
+            "line1" => "1 44406U 19038W   24094.95219425  .00026482  00000-0  71098-3 0  9995",
+            "line2" => "2 44406  97.7044  89.1200 0014055   7.8960 352.2502 15.37821998262930"
+        ]
     ]);
+    $lucky7->commit();
 
-    $myStation137->commit();
+    $lucky7Telem = new \DAL\transmitter();
+    $lucky7Telem->target->set($lucky7);
+    $lucky7Telem->dataType->set($telemetryType);
+    $lucky7Telem->bandwidth->set(120000);
+    $lucky7Telem->centerFrequency->set(437525000);
+    $lucky7Telem->modulation->set($bpsk);
+    $lucky7Telem->antenna->set($dipole);
+    $lucky7Telem->priority->set(0);
+    $lucky7Telem->processPipe->set($luckyPipe);
+    $lucky7Telem->commit();
