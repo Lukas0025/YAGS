@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+    {% INCLUDE layout/head.html %}
+    <body>
+        <div class="page">
+            {% BINDINCLUDE layout/header.html logined %}
+
+            <div class="page-header d-print-none mt-4">
+                <div class="container-xl">
+                    <div class="row g-2 align-items-center">
+                        <div class="col">
+                            <!-- Page pre-title -->
+                            <div class="page-pretitle">
+                                stations
+                            </div>
+                            <h2 class="page-title">
+                                Uplinks
+                            </h2>
+                        </div>
+                        <div class="col-auto ms-auto d-print-none">
+                          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            Plan uplink
+                          </button>
+                        </div>
+                    </div>
+
+                    <div class="col mt-4" style="display: none;" id="created-alert">
+                      <div class="alert alert-success" role="alert">Successly created uplink plan <span id="created-id"></span> [<a href="/uplinks">refresh</a>]?</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-body">
+                <div class="container-xl">
+                  <div class="row row-deck row-cards">
+                    
+                    
+                    <div class="col-12">
+                      <div class="card">
+                        <div class="card-header">
+                          <h3 class="card-title">Planed, Done and Faild</h3>
+                        </div>
+                        <div class="table-responsive">
+                          <table class="table card-table table-vcenter text-nowrap datatable table-hover">
+                            <thead>
+                              <tr>
+                                <th>Station</th>
+                                <th>Target</th>
+                                <th>Modulation</th>
+                                <th>Type</th>
+                                <th>Frequency</th>
+                                <th>Status</th>
+                                <th>Time</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {% FOREACH uplinks RENDER blocks/uplink-item.html %}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="modal" id="exampleModal" tabindex="-1">
+                <div class="modal-dialog modal-lg" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title">New uplink</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <div class="row">
+                        <div class="col-lg-5">
+                          <div class="mb-3">
+                            <label class="form-label">Station transmitter</label>
+                            <select class="form-select" id="plan-transmitter">
+                              {% FOREACH transmitters USE '<option value="(\ BIND item.id \)">(\ BIND item.station.name \) @ (\ BIND item.centerFrequency \)Hz</option>' %}
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-lg-7">
+                          <div class="mb-3">
+                            <label class="form-label">Target receiver</label>
+                            <select class="form-select" id="plan-receiver">
+                              {% FOREACH receivers USE '<option value="(\ BIND item.id \)">
+                                (\ BIND item.target.name \) -
+                                (\ BIND item.modulation.name \) -
+                                (\ BIND item.dataType.name \) @
+                                (\ BIND item.centerFrequency \)Hz
+                              </option>' %}
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal-body">
+                      <div class="row">
+                        <div class="col-lg-6">
+                          <div class="mb-3">
+                            <label class="form-label">Uplink at UTC time</label>
+                            <div class="input-group">
+                              <input type="datetime-local" id="plan-start" class="form-control">
+                              <span class="input-group-text">
+                                <input class="form-check-input m-0" name="plan-start-type" type="radio" checked="" id="timed-uplink">
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-lg-6">
+                          <div class="mb-3">
+                            <label class="form-label">Uplink after downlink</label>
+                            <div class="input-group">
+                              <input type="number" id="plan-after-down" class="form-control" placeholder="delay in sec." autocomplete="off">
+                              <span class="input-group-text">
+                                <input class="form-check-input m-0" name="plan-start-type" type="radio" id="delayd-uplink">
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal-body">
+                      <div class="row">
+                        <div class="col-lg-12">
+                          <div class="mb-6">
+                            <label class="form-label">Hex data</label>
+                            <textarea id="plan-data" id="plan-data" class="form-control"></textarea>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn me-auto" data-bs-dismiss="modal">Close</button>
+                      <button type="button" onclick="plan()" class="btn btn-primary" data-bs-dismiss="modal">Plan!</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            <!-- Tabler Core -->
+            <script src="/dist/js/tabler.min.js?1668287865" defer=""></script>
+
+            <script src="/static/js/uplinks.js?v=3"></script>
+        </div>
+    </body>
+</html>

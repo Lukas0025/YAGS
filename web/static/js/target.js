@@ -1,7 +1,19 @@
 var openTransmitter = null;
 
+function modulationChange() {
+    var modulation = document.getElementById("transmitter-modulation");
+
+    if (modulation.options[modulation.selectedIndex].text == "LORA") {
+        document.getElementById("lora-params").style.display = "flex";
+    } else {
+        document.getElementById("lora-params").style.display = "none";
+    }
+}
+
 function save(targetID) {
     var transmitter = new FormData();
+
+    var modulationEl = document.getElementById("transmitter-modulation");
 
     var freq       = document.getElementById("transmitter-freq").value;
     var band       = document.getElementById("transmitter-band").value;
@@ -10,6 +22,12 @@ function save(targetID) {
     var datatype   = document.getElementById("transmitter-datatype").value;
     var priority   = document.getElementById("transmitter-priority").value;
     var pipe       = document.getElementById("transmitter-pipe").value;
+
+    var sf         = document.getElementById("transmitter-sf").value;
+    var codingrate = document.getElementById("transmitter-codingrate").value;
+    var syncword   = document.getElementById("transmitter-syncword").value;
+    var preamble   = document.getElementById("transmitter-preamble").value;
+
     var id         = openTransmitter;
 
     transmitter.append('id', id);
@@ -21,6 +39,14 @@ function save(targetID) {
     transmitter.append('priority', priority);
     transmitter.append('pipe', pipe);
     transmitter.append('target', targetID);
+
+    if (modulationEl.options[modulationEl.selectedIndex].text == "LORA") {
+        transmitter.append('lora',           'true');
+        transmitter.append('sf',             sf);
+        transmitter.append('codingRate',     codingrate);
+        transmitter.append('syncWord',       syncword);
+        transmitter.append('preambleLength', preamble);
+    }
 
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {

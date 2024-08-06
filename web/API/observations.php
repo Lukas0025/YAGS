@@ -54,7 +54,12 @@
 
                 "transmitter" => [
                     "centerFrequency" => $plan->transmitter->get()->centerFrequency->get(),
-                    "bandwidth"       => $plan->transmitter->get()->bandwidth->get()
+                    "bandwidth"       => $plan->transmitter->get()->bandwidth->get(),
+                    "modulation"      => $plan->transmitter->get()->modulation->get()->name->get(),
+                    "sf"              => $plan->transmitter->get()->sf->get(),
+                    "codingRate"      => $plan->transmitter->get()->codingRate->get(),
+                    "syncWord"        => $plan->transmitter->get()->syncWord->get(),
+                    "preambleLength"  => $plan->transmitter->get()->preambleLength->get()
                 ],
 
                 "receiver" => [
@@ -64,7 +69,10 @@
                 "proccessPipe" => $plan->transmitter->get()->processPipe->get()->pipe->get(),
 
                 "start" => $plan->start->get(),
-                "end"   => $plan->end->get()
+                "end"   => $plan->end->get(),
+
+                "startEpoch" => $plan->start->value,
+                "endEpoch" => $plan->end->value
             ]);
         }
 
@@ -159,6 +167,61 @@
         $obs->status->set("success");
         $obs->commit();
         
+        return ["status" => true];
+    }
+
+    function addPacket($params) {
+        if (is_null($params["data"]) || is_null($params["id"])) {
+            print_r($_POST);
+			return ["status" => "data or observation ID is not set"];
+		}
+
+        $adir = __DIR__ . "/../ARTEFACTS/" . $params["id"];
+
+        mkdir($adir, 0777, true);
+
+        $packets = [];
+
+        // check if packets file alredy exists
+        if (file_exists($adir . "/packets.json")) {
+            $packets = json_decode(file_get_contents($adir . "/packets.json"), true);
+        } else {
+            $obs = new \DAL\observation();
+            $obs->id->set($params["id"]);
+            $obs->fetch();
+
+            //get current artefacts
+            $artefacts = $obs->artefacts->get();
+
+            $artefacts[] = "/ARTEFACTS/{$params['id']}/packets.json";
+
+            //done artefact save
+            $obs->artefacts->set($artefacts);
+            $obs->commit();
+        }
+
+        $packet = [
+            "time" => time(),
+            "data" => $params["data"]
+        ];
+
+        if (!is_null($params["snr"])) {
+            $packet["snr"] = $params["snr"];
+        }
+
+        if (!is_null($params["ferror"])) {
+            $packet["ferror"] = $params["ferror"];
+        }
+
+        if (!is_null($params["rssi"])) {
+            $packet["rssi"] = $params["rssi"];
+        }
+
+        array_push($packets, $packet); 
+
+        // write back to file
+        file_put_contents($adir . "/packets.json", json_encode($packets));
+
         return ["status" => true];
     }
 

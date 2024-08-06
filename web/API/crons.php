@@ -51,3 +51,36 @@
         }
 
     }
+
+    function setup($params) {
+        $system = new \DAL\system();
+
+        // detect if is seeded
+        if (!$system->find("name", "seeds")) {
+            //include seeds and seed DB
+            include __DIR__ . "/../seeds.php";
+
+            $params["plans"] = json_decode($params["plans"]);
+            $params["params"] = json_decode($params["params"]);
+
+            $params["lat"] = floatval($params["lat"]);
+            $params["lon"] = floatval($params["lon"]);
+            $params["alt"] = floatval($params["alt"]);
+
+            $data = seed($params);
+    
+            $system->name->set("seeds");
+            $system->value->set("true");
+            $system->commit();
+
+            //login as user
+            $container = new \wsos\structs\container();
+            $auth      = $container->get("auth");
+            
+            $auth->login($params["user"], $params["pass"]);
+
+            return ["status" => true, "gsId" => $data["gs"], "apikey" => $data["apiKey"]];
+        }
+        
+        return ["status" => false];
+    }

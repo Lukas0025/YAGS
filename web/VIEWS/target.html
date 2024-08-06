@@ -229,7 +229,7 @@
                   <div class="col-lg-3">
                     <div class="mb-3">
                       <label class="form-label">Modulation</label>
-                      <select class="form-select" id="transmitter-modulation">
+                      <select class="form-select" id="transmitter-modulation" onchange="modulationChange()">
                         {% FOREACH modulations USE '<option value="(\ BIND item.id \)">(\ BIND item.name \)</option>' %}
                       </select>
                     </div>
@@ -246,6 +246,37 @@
                     <div class="mb-3">
                       <label class="form-label">Priority [UP]</label>
                       <input type="number" step="1" id="transmitter-priority" placeholder="0" class="form-control">
+                    </div>
+                  </div>
+                </div>
+                <div class="row" id="lora-params" style="display: none;">
+                  <div class="col-lg-3">
+                    <div class="mb-3">
+                      <label class="form-label">Spreading Factor</label>
+                      <input type="number" step="1" id="transmitter-sf" placeholder="7" min="7" max="12" class="form-control">
+                    </div>
+                  </div>
+                  <div class="col-lg-3">
+                    <div class="mb-3">
+                      <label class="form-label">Coding Rate</label>
+                      <input type="number" step="1" id="transmitter-codingrate" placeholder="5" class="form-control">
+                    </div>
+                  </div>
+                  <div class="col-lg-3">
+                    <div class="mb-3">
+                      <label class="form-label">Sync Word</label>
+                      <div class="input-group mb-2">
+                        <span class="input-group-text">
+                          0x
+                        </span>
+                        <input type="text" class="form-control" id="transmitter-syncword" placeholder="34">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-3">
+                    <div class="mb-3">
+                      <label class="form-label">Preamble Length</label>
+                      <input type="number" step="1" id="transmitter-preamble" placeholder="8" class="form-control">
                     </div>
                   </div>
                 </div>
@@ -273,7 +304,7 @@
 
         <!-- Tabler Core -->
         <script src="/dist/js/tabler.min.js?1668287865" defer=""></script>
-        <script src="/static/js/target.js" defer=""></script>
+        <script src="/static/js/target.js?2" defer=""></script>
       </div>
     </div>
   </div>

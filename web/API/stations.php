@@ -93,3 +93,14 @@
 
         return ["id" => $myStation->id->get()];
     }
+
+    function amIActive($params) {
+        $station  = new \DAL\station();
+
+        $station->find("apiKey", $params["apiKey"]);
+
+        return [
+            "status" => $station->lastSeen->delta() < 3600,
+            "delta" =>  $station->lastSeen->delta()
+        ];
+    }

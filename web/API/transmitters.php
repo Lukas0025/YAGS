@@ -41,6 +41,15 @@
         $transmitter->antenna->set($params["antenna"]);
         $transmitter->target->set($params["target"]);
 
+
+        if ($params["lora"] == "true") {
+            $transmitter->sf            ->set($params["sf"]);
+            $transmitter->codingRate    ->set($params["codingRate"]);
+            $transmitter->syncWord      ->set($params["syncWord"]);
+            $transmitter->preambleLength->set($params["preambleLength"]);
+        }
+
+
         $transmitter->commit();
 
         return [

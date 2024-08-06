@@ -104,6 +104,22 @@
                           <div class="datagrid-title">Receiver gain</div>
                           <div class="datagrid-content">{% BIND observation.receiver.gain %}</div>
                         </div>
+                          <div class="datagrid-item" style="{% IF observation.transmitter.modulation.name!=LORA USE display:none; %}">
+                            <div class="datagrid-title">Spreading Factor</div>
+                            <div class="datagrid-content">{% BIND observation.transmitter.sf %}</div>
+                          </div>
+                          <div class="datagrid-item" style="{% IF observation.transmitter.modulation.name!=LORA USE display:none; %}">
+                            <div class="datagrid-title">Coding Rate</div>
+                            <div class="datagrid-content">{% BIND observation.transmitter.codingRate %}</div>
+                          </div>
+                          <div class="datagrid-item" style="{% IF observation.transmitter.modulation.name!=LORA USE display:none; %}">
+                            <div class="datagrid-title">Sync Word</div>
+                            <div class="datagrid-content">0x{% BIND observation.transmitter.syncWord %}</div>
+                          </div>
+                          <div class="datagrid-item" style="{% IF observation.transmitter.modulation.name!=LORA USE display:none; %}">
+                            <div class="datagrid-title">Preamble Length</div>
+                            <div class="datagrid-content">{% BIND observation.transmitter.preambleLength %}</div>
+                          </div>
                       </div>
                     </div>
                   </div>
@@ -252,6 +268,8 @@
                     container.innerHTML = "";
 
                     var json = request.responseText;
+
+		    console.log(json);
 
                     var options = {
                       fontFamily: '"Fira Mono", monospace',

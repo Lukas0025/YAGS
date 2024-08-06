@@ -15,6 +15,7 @@
     $sites = [
         "sites" => [
             "observations" => ["controller" => __DIR__ . "/CONTROLLERS/observations.php", "name" => "Observations", "icon" => "/static/icons/telescope.svg",      "menu" => true],
+            "uplinks"      => ["controller" => __DIR__ . "/CONTROLLERS/uplinks.php",      "name" => "Uplinks",      "icon" => "/static/icons/wave-sine.svg",      "menu" => true],
             "targets"      => ["controller" => __DIR__ . "/CONTROLLERS/targets.php",      "name" => "Targets",      "icon" => "/static/icons/focus-2.svg",        "menu" => true],
             //"modulations"  => ["controller" => __DIR__ . "/CONTROLLERS/telemetry.php",    "name" => "Telemetry",    "icon" => "/static/icons/wave-sine.svg",      "menu" => true],
             /*
@@ -27,6 +28,8 @@
             "target"       => ["controller" => __DIR__ . "/CONTROLLERS/target.php",       "name" => "Target",                                                     "menu" => false],
             "login"        => ["controller" => __DIR__ . "/CONTROLLERS/login.php",        "name" => "Login",                                                      "menu" => false],
             "api"          => ["controller" => __DIR__ . "/API/main.php",                 "name" => "api",                                                        "menu" => false],
+            "setup"        => ["controller" => __DIR__ . "/CONTROLLERS/setup.php",        "name" => "setup",                                                      "menu" => false],
+            "logout"       => ["controller" => __DIR__ . "/CONTROLLERS/logout.php",       "name" => "logout",                                                     "menu" => false],
         ],
 
         "controller" => __DIR__ . "/CONTROLLERS/dashboard.php",
@@ -56,11 +59,7 @@
 
     // detect if is seeded
     if (!$system->find("name", "seeds")) {
-        include "seeds.php";
-
-        $system->name->set("seeds");
-        $system->value->set("true");
-        $system->commit();
+        if (strpos($url, '/api/') === false) $router->route("/setup");
     }
 
     $router->route($url);

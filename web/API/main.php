@@ -17,6 +17,7 @@
     include_once(__DIR__ . "/crons.php");
     include_once(__DIR__ . "/transmitters.php");
     include_once(__DIR__ . "/receivers.php");
+    include_once(__DIR__ . "/uplinks.php");
 
     //init API
     $api->serve($router->getArgs());
